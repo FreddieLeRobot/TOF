@@ -7,7 +7,7 @@ float voltage = 0;
 int counter = 0;
 #define testLED PIN_ENABLE_I2C_PULLUP
 
-const int RunningAverageCount = 16;
+const int RunningAverageCount = 3;
 float RunningAverageBuffer[RunningAverageCount];
 int NextRunningAverage;
 
@@ -21,14 +21,14 @@ void setup() {
   delay(5000);
 }
 
-void batteryCheck() {
+void loop() {
   if (isOn == 0) {
     Serial.println("Hello world!");
     isOn = 1;
   }
   // put your main code here, to run repeatedly:
   sensorVal = analogRead(battPin);
-  voltage = fmap(sensorVal, 0, 1024, 0.0, 3.3);
+  voltage = fmap(sensorVal, 0, 975, 0.0, 4.095);
 
   RunningAverageBuffer[NextRunningAverage++] = voltage;
   if (NextRunningAverage >= RunningAverageCount) {
@@ -40,7 +40,15 @@ void batteryCheck() {
   }
   RunningAverageVolts /= RunningAverageCount;
 
-Serial.println(RunningAverageVolts);
+  if (RunningAverageVolts >= 4) {
+    Serial.print("Battery Voltage: ");
+    Serial.println(RunningAverageVolts);
+    Serial.println("Battery Charging - USB Input Detected");
+  }
+  else {
+    Serial.print("Battery Voltage: ");
+    Serial.println(RunningAverageVolts);
+  }
 
   delay(50);  // wait for a second
   counter += 1;

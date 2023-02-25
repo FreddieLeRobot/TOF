@@ -1,19 +1,19 @@
 // TOF Software V.0.0.2
 // JFM - 20JAN23
-// 
+//
 
 
 // Constants - Change these as testing allows
-const int wakeThreshold = 950;   // Threshold on analog reading to make sure the device stays awake.
-const int sleepTime = 30000;    // Time gap for when threshold needs to 
+const int wakeThreshold = 950;  // Threshold on analog reading to make sure the device stays awake.
+const int sleepTime = 30000;    // Time gap for when threshold needs to
 
 // Startup Variables
 bool isOn = 0;
 bool interrupt = 1;
 
 // Timing variables
-int sleepTimerStart = millis(); // As name implies, timer value that starts when timing for sleep
-int activeCheck = millis(); // Timer value to compare to sleepTimerStart
+int sleepTimerStart = millis();  // As name implies, timer value that starts when timing for sleep
+int activeCheck = millis();      // Timer value to compare to sleepTimerStart
 bool resetTimer = 0;
 
 // Battery pin setup
@@ -36,7 +36,7 @@ float xn1 = 0;
 float yn1 = 0;
 
 //Running Average Setup
-const int RunningAverageCount = 16;
+const int RunningAverageCount = 3;
 float RunningAverageBuffer[RunningAverageCount];
 int NextRunningAverage;
 
@@ -60,7 +60,7 @@ void setup() {
 void loop() {
 
   // Sleep Mode
-  while (interrupt != 1){
+  while (interrupt != 1) {
     delay(100);
     sensorVal = analogRead(sensorPin);
     if (sensorVal >= wakeThreshold) {
@@ -76,8 +76,8 @@ void loop() {
 
   // Main functions - Pressure check regularly, battery check every 1000 samples, sleep check regularly.
   resetTimer = pressureCheck();
-  if (resetTimer == 1){
-    sleepTimerStart = millis(); // Reset sleep timer if pressureCheck gets a value higher than the wake up threshold!
+  if (resetTimer == 1) {
+    sleepTimerStart = millis();  // Reset sleep timer if pressureCheck gets a value higher than the wake up threshold!
   }
 
   if (battCounter >= 1000) {
@@ -93,9 +93,9 @@ void batteryCheck() {
   //Turn on battery control pin (allows voltage to be checked)
   Serial.println("Checking Battery");
   digitalWrite(battCtrl, HIGH);
-  delay(10); // Slight delay to let voltage settle - may change this later.
+  delay(100);  // Slight delay to let voltage settle - may change this later.
   battVal = analogRead(battPin);
-  battVoltage = fmap(battVal, 0, 1024, 0.0, 3.3);
+  battVoltage = fmap(battVal, 0, 975, 0.0, 4);
 
   RunningAverageBuffer[NextRunningAverage++] = battVoltage;
   if (NextRunningAverage >= RunningAverageCount) {
@@ -107,10 +107,19 @@ void batteryCheck() {
   }
   RunningAverageVolts /= RunningAverageCount;
 
-  //Serial.println(RunningAverageVolts);
+  if (RunningAverageVolts >= 3.8) {
+    Serial.print("Battery Voltage: ");
+    Serial.println(RunningAverageVolts);
+    Serial.println("Battery Charging - USB Input Detected");
+  }
+  else if (RunningAverageVolts <= 3){
+    Serial.print("Battery Voltage: ");
+    Serial.println(RunningAverageVolts);
+    Serial.println("Low Battery, Please Recharge");
+  }
+
   digitalWrite(battCtrl, LOW);
   battCounter = 0;
-
 }
 
 bool pressureCheck() {
@@ -119,10 +128,10 @@ bool pressureCheck() {
     isOn = 1;
   }
   sensorVal = analogRead(sensorPin);
-  pressureVoltage = fmap(sensorVal, 0, 1024, 0.000, 15.000);
+  pressureVoltage = fmap(sensorVal, 0, 996, 0.000, 15.000);
 
   //Low Pass Filter
-  float yn = 0.969*yn1 + 0.0155*pressureVoltage + 0.0155*xn1;
+  float yn = 0.969 * yn1 + 0.0155 * pressureVoltage + 0.0155 * xn1;
   delay(1);
   xn1 = pressureVoltage;
   yn1 = yn;
@@ -132,22 +141,20 @@ bool pressureCheck() {
   delay(1);  // wait for 1 ms
 
   //Check to reset timer
-  if (sensorVal >= wakeThreshold){
+  if (sensorVal >= wakeThreshold) {
     return 1;
-  }
-  else return 0;
-
+  } else return 0;
 }
 
-void sleepCheck(){
+void sleepCheck() {
   activeCheck = millis();
-  if ((activeCheck-sleepTimerStart) >= sleepTime) goToSleep();
+  if ((activeCheck - sleepTimerStart) >= sleepTime) goToSleep();
 }
 
 void wakeupRoutine() {
 
   Serial.println("Waking Up!");
-  // Blink LED to show user that device is back on. 
+  // Blink LED to show user that device is back on.
   digitalWrite(testLED, HIGH);
   delay(100);
   digitalWrite(testLED, LOW);
@@ -161,7 +168,7 @@ void wakeupRoutine() {
   digitalWrite(testLED, LOW);
   delay(100);
   digitalWrite(testLED, HIGH);
-  interrupt = 1; // Set interrupt bit
+  interrupt = 1;  // Set interrupt bit
   // Turn on BLE functions?
 
   // Start over timer for sleep.
@@ -183,7 +190,7 @@ void goToSleep() {
   digitalWrite(testLED, HIGH);
   delay(300);
   digitalWrite(testLED, LOW);
-  interrupt = 0; // Set interrupt bit
+  interrupt = 0;  // Set interrupt bit
   // Turn off BLE functions?
 }
 
