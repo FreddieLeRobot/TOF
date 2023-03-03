@@ -40,6 +40,13 @@ const int RunningAverageCount = 3;
 float RunningAverageBuffer[RunningAverageCount];
 int NextRunningAverage;
 
+// Messenger definitions and uses
+typedef enum { PRESSURE, CHARGING, BATT_VOLTAGE, SLEEPING} code;
+byte CHARGE[1] = {0xB1};
+byte NO_CHARGE[1] = {0xB0};
+byte LOW_CHARGE[1] = {0xB2};
+
+
 
 void setup() {
 
@@ -66,6 +73,10 @@ void loop() {
     if (sensorVal >= wakeThreshold) {
       wakeupRoutine();
     }
+    else {
+      byte message[1] = {0x00};
+      Messenger(SLEEPING, message);
+    }
   }
 
   // BLE Initialize
@@ -91,7 +102,7 @@ void loop() {
 void batteryCheck() {
 
   //Turn on battery control pin (allows voltage to be checked)
-  Serial.println("Checking Battery");
+  //Serial.println("Checking Battery");
   digitalWrite(battCtrl, HIGH);
   delay(100);  // Slight delay to let voltage settle - may change this later.
   battVal = analogRead(battPin);
@@ -108,14 +119,19 @@ void batteryCheck() {
   RunningAverageVolts /= RunningAverageCount;
 
   if (RunningAverageVolts >= 3.8) {
-    Serial.print("Battery Voltage: ");
-    Serial.println(RunningAverageVolts);
-    Serial.println("Battery Charging - USB Input Detected");
+    Messenger(CHARGING, CHARGE);
   }
   else if (RunningAverageVolts <= 3){
-    Serial.print("Battery Voltage: ");
-    Serial.println(RunningAverageVolts);
-    Serial.println("Low Battery, Please Recharge");
+    Messenger(CHARGING, LOW_CHARGE);
+    byte hex[4] = {0};
+    FloatToHex(RunningAverageVolts, hex);
+    Messenger(BATT_VOLTAGE, hex);
+  }
+  else {
+    Messenger(CHARGING, NO_CHARGE);
+    byte hex[4] = {0};
+    FloatToHex(RunningAverageVolts, hex);
+    Messenger(BATT_VOLTAGE, hex);
   }
 
   digitalWrite(battCtrl, LOW);
@@ -123,10 +139,14 @@ void batteryCheck() {
 }
 
 bool pressureCheck() {
+
+  byte press_hex[4] = {0};
+
   if (isOn == 0) {
-    Serial.println("Hello world!");
-    isOn = 1;
+    isOn = 1; // Do something with this later
   }
+  
+
   sensorVal = analogRead(sensorPin);
   pressureVoltage = fmap(sensorVal, 0, 996, 0.000, 15.000);
 
@@ -136,7 +156,8 @@ bool pressureCheck() {
   xn1 = pressureVoltage;
   yn1 = yn;
 
-  Serial.println(yn, 4);
+  FloatToHex(yn, press_hex);
+  Messenger(PRESSURE, press_hex);
 
   delay(1);  // wait for 1 ms
 
@@ -154,6 +175,8 @@ void sleepCheck() {
 void wakeupRoutine() {
 
   Serial.println("Waking Up!");
+  byte message[1] = {0x01};
+  Messenger(SLEEPING, message); // Send message that device is waking up
   // Blink LED to show user that device is back on.
   digitalWrite(testLED, HIGH);
   delay(100);
@@ -191,9 +214,50 @@ void goToSleep() {
   delay(300);
   digitalWrite(testLED, LOW);
   interrupt = 0;  // Set interrupt bit
+  byte message[1] = {0x00};
+  Messenger(SLEEPING, message); // Send message that device is sleeping
   // Turn off BLE functions?
+}
+
+void Messenger(code type, byte* message) {
+  switch (type) {
+    case PRESSURE:
+      Serial.print(0xC1, HEX);
+      for (int i = 0; i<=4; i++){
+        if (message[i] < 16) Serial.print("0");
+        Serial.print(message[i],HEX);
+      }
+      Serial.println();
+      break;
+    case CHARGING:
+      Serial.print(0xC2,HEX);
+      if (message[0] < 16) Serial.print("0");
+      Serial.print(message[0],HEX);
+      Serial.println();
+      break;
+    case BATT_VOLTAGE:
+      Serial.print(0xC3, HEX);
+      for (int i = 0; i<=4; i++){
+        if (message[i] < 16) Serial.print("0");
+        Serial.print(message[i],HEX);
+      }
+      Serial.println();
+      break;
+    case SLEEPING:
+      Serial.print(0xC4, HEX);
+      if (message[0] < 16) Serial.print("0");
+      Serial.print(message[0],HEX);
+      Serial.println();
+      break;
+  }
 }
 
 float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
+byte FloatToHex(float f, byte* hex){
+  byte* f_byte = reinterpret_cast<byte*>(&f);
+  memcpy(hex, f_byte, 4);
+}
+
