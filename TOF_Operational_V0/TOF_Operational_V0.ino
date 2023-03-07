@@ -5,7 +5,7 @@
 
 // Constants - Change these as testing allows
 const int wakeThreshold = 950;  // Threshold on analog reading to make sure the device stays awake.
-const int sleepTime = 30000;    // Time gap for when threshold needs to
+const int sleepTime = 300000;    // Threshold (milliseconds) for program to stay on with no activity before falling asleep.
 
 // Startup Variables
 bool isOn = 0;
@@ -223,7 +223,7 @@ void Messenger(code type, byte* message) {
   switch (type) {
     case PRESSURE:
       Serial.print(0xC1, HEX);
-      for (int i = 0; i<=4; i++){
+      for (int i = 3; i>=0; i--){
         if (message[i] < 16) Serial.print("0");
         Serial.print(message[i],HEX);
       }
