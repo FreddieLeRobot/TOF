@@ -1,0 +1,90 @@
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.exe
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.deps.json
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.runtimeconfig.json
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.pdb
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\HarfBuzzSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.SkiaSharpView.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.SkiaSharpView.WinForms.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\OpenTK.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\OpenTK.GLControl.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.HarfBuzz.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.Views.Desktop.Common.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.Views.WindowsForms.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx\native\libHarfBuzzSharp.dylib
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-arm64\native\libHarfBuzzSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x64\native\libHarfBuzzSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x86\native\libHarfBuzzSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.AssemblyReference.cache
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.Form1.resources
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.GenerateResource.cache
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.AssemblyInfoInputs.cache
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.AssemblyInfo.cs
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.CoreCompileInputs.cache
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.CopyComplete
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\refint\COMDataStream.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.pdb
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.genruntimeconfig.cache
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\obj\Debug\net6.0-windows\ref\COMDataStream.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\System.IO.Ports.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\unix\lib\net6.0\System.IO.Ports.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.IO.Ports.dll
+C:\Users\Joe\source\repos\Tests\WinForms\LiveCharts\COMDataStream\bin\Debug\net6.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.exe
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.deps.json
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.runtimeconfig.json
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\COMDataStream.pdb
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\HarfBuzzSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.SkiaSharpView.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\LiveChartsCore.SkiaSharpView.WinForms.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\OpenTK.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\OpenTK.GLControl.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.HarfBuzz.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.Views.Desktop.Common.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\SkiaSharp.Views.WindowsForms.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\System.IO.Ports.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx\native\libHarfBuzzSharp.dylib
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-arm64\native\libHarfBuzzSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x64\native\libHarfBuzzSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x86\native\libHarfBuzzSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\unix\lib\net6.0\System.IO.Ports.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.IO.Ports.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.AssemblyReference.cache
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.Form1.resources
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.GenerateResource.cache
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.AssemblyInfoInputs.cache
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.AssemblyInfo.cs
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.CoreCompileInputs.cache
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.csproj.CopyComplete
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\refint\COMDataStream.dll
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.pdb
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\COMDataStream.genruntimeconfig.cache
+C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\obj\Debug\net6.0-windows\ref\COMDataStream.dll

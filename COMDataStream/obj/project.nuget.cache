@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "dgSpecHash": "VauxyEgFaFudf8RbC6xOt4QImfNxWNYIGxJVsGC5rjCVpQwDvWQ1D+F5b0KvTuJ4I+jRleQWGEBFwg5+QjQNYA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\ArduinoSketches\\TOF\\COMDataStream\\COMDataStream.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Joe\\.nuget\\packages\\communitytoolkit.mvvm\\8.1.0\\communitytoolkit.mvvm.8.1.0.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\harfbuzzsharp\\2.8.2.3\\harfbuzzsharp.2.8.2.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\harfbuzzsharp.nativeassets.macos\\2.8.2.3\\harfbuzzsharp.nativeassets.macos.2.8.2.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\2.8.2.3\\harfbuzzsharp.nativeassets.win32.2.8.2.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\livechartscore\\2.0.0-beta.701\\livechartscore.2.0.0-beta.701.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\livechartscore.skiasharpview\\2.0.0-beta.701\\livechartscore.skiasharpview.2.0.0-beta.701.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\livechartscore.skiasharpview.winforms\\2.0.0-beta.701\\livechartscore.skiasharpview.winforms.2.0.0-beta.701.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\microsoft.netcore.platforms\\2.0.0\\microsoft.netcore.platforms.2.0.0.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\microsoft.win32.systemevents\\4.5.0\\microsoft.win32.systemevents.4.5.0.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\opentk\\3.1.0\\opentk.3.1.0.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\opentk.glcontrol\\3.1.0\\opentk.glcontrol.3.1.0.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.linux-arm.runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.linux-arm64.runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.linux-x64.runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.osx-arm64.runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.osx-arm64.runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\runtime.osx-x64.runtime.native.system.io.ports\\8.0.0-preview.1.23110.8\\runtime.osx-x64.runtime.native.system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp\\2.88.3\\skiasharp.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp.harfbuzz\\2.88.3\\skiasharp.harfbuzz.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.3\\skiasharp.nativeassets.macos.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.3\\skiasharp.nativeassets.win32.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp.views.desktop.common\\2.88.3\\skiasharp.views.desktop.common.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\skiasharp.views.windowsforms\\2.88.3\\skiasharp.views.windowsforms.2.88.3.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\system.drawing.common\\4.5.1\\system.drawing.common.4.5.1.nupkg.sha512",
+    "C:\\Users\\Joe\\.nuget\\packages\\system.io.ports\\8.0.0-preview.1.23110.8\\system.io.ports.8.0.0-preview.1.23110.8.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'OpenTK 3.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "OpenTK",
+      "targetGraphs": [
+        "net6.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'OpenTK.GLControl 3.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "OpenTK.GLControl",
+      "targetGraphs": [
+        "net6.0-windows7.0"
+      ]
+    }
+  ]
+}
