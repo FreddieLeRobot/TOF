@@ -8,4 +8,4 @@ Folders:
 - GUI_Executable - Installer for the Testing application
 
 GUI Screenshot:
-![My Remote Image](https://imgur.com/xFoV5nG)
+![My Image](GUI_Executable/Screenshots/TOF_GUI.png)
