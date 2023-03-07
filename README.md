@@ -8,4 +8,4 @@ Folders:
 - GUI_Executable - Installer for the Testing application
 
 GUI Screenshot:
-![alt text](https://imgur.com/a/99Bn00V)
+![My Remote Image](https://imgur.com/xFoV5nG)
