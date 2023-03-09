@@ -1060,11 +1060,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\ArduinoSketches\\TOF\\COMDataStream\\COMDataStream.csproj",
+      "projectUniqueName": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\Software\\TOF\\GUI_Build\\COMDataStream.csproj",
       "projectName": "COMDataStream",
-      "projectPath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\ArduinoSketches\\TOF\\COMDataStream\\COMDataStream.csproj",
+      "projectPath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\Software\\TOF\\GUI_Build\\COMDataStream.csproj",
       "packagesPath": "C:\\Users\\Joe\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\ArduinoSketches\\TOF\\COMDataStream\\obj\\",
+      "outputPath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\Software\\TOF\\GUI_Build\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Joe\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,3 +1,4 @@
+using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
@@ -16,6 +17,7 @@ namespace COMDataStream
         private readonly CartesianChart _cartesianChart;
         private readonly ViewModel _viewModel;
         private bool? _isStreaming = false;
+        private bool _firstSleep = false;
 
         public Form1()
         {
@@ -28,7 +30,8 @@ namespace COMDataStream
             _cartesianChart = new CartesianChart
             {
                 Series = _viewModel.Series,
-
+                XAxes = _viewModel.XAxes,
+                EasingFunction = null,
 
                 // out of livecharts properties...
                 Location = new System.Drawing.Point(0, 100),
@@ -39,11 +42,11 @@ namespace COMDataStream
             _cartesianChart.YAxes = new List<Axis> {
                 new Axis
                 {
-                    Name = "Y Axis",
+                    Name = "Time",
                     NamePaint = new SolidColorPaint(SKColors.GhostWhite),
 
                     LabelsPaint = new SolidColorPaint(SKColors.WhiteSmoke),
-                    TextSize = 20,
+                    TextSize = 15,
 
                     SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
                     {
@@ -53,26 +56,33 @@ namespace COMDataStream
                 }
             };
 
-            _cartesianChart.XAxes = new List<Axis> {
-                new Axis
-                {
-                    Name = "X Axis",
-                    NamePaint = new SolidColorPaint(SKColors.GhostWhite),
+            //_cartesianChart.XAxes = new List<Axis> {
+            //    new Axis
+            //    {
+            //        Labeler = value => new DateTime((long) value).ToString("MMMM dd"),
+            //        Name = "Pressure",
+            //        NamePaint = new SolidColorPaint(SKColors.GhostWhite),
 
-                    LabelsPaint = new SolidColorPaint(SKColors.WhiteSmoke),
-                    TextSize = 20,
+            //        LabelsPaint = new SolidColorPaint(SKColors.WhiteSmoke),
+            //        TextSize = 20,
 
-                    MaxLimit = 8000,
-                    MinLimit = 20, // Set zoom when a COM port handshake is called.
-                    MinStep = 5,
+            //        MaxLimit = 8000,
+            //        MinLimit = 20, // Set zoom when a COM port handshake is called.
+            //        MinStep = 5,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
-                    {
-                        StrokeThickness = 2,
-                        PathEffect = new DashEffect(new float[] { 3, 3 })
-                    }
-                }
-            };
+            //        LabelsRotation = 15,
+            //         //set the unit width of the axis to "days"
+            //         //since our X axis is of type date time and 
+            //         //the interval between our points is in days
+            //        UnitWidth = TimeSpan.FromDays(1).Ticks,
+
+            //        SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
+            //        {
+            //            StrokeThickness = 2,
+            //            PathEffect = new DashEffect(new float[] { 3, 3 })
+            //        }
+            //    }
+            //};
 
             _cartesianChart.DrawMarginFrame = new DrawMarginFrame
             {
@@ -181,7 +191,7 @@ namespace COMDataStream
             {
                 case "C1": // Code C1: Pressure
                     // Parse hex string after C1 and convert to float
-                    string hexNum = data.Substring(2,8);
+                    string hexNum = data.Substring(2, 8);
                     //hexNum = ReverseString(hexNum);
                     var num = uint.Parse(hexNum, System.Globalization.NumberStyles.AllowHexSpecifier);
                     byte[] floatVals = BitConverter.GetBytes(num);
@@ -194,6 +204,27 @@ namespace COMDataStream
                 case "C2":
                     break;
                 case "C3":
+                    break;
+                case "C4":
+                    switch (data.Substring(2, 2))
+                    {
+                        case "00":
+                            if (_firstSleep == false)
+                            {
+                                checkBox2.Checked = true;
+                                _firstSleep = true;
+                            }
+                            else
+                            {
+                                textBox1.Text = "Sleep Mode";
+                            }
+                            break;
+                        case "01":
+                            checkBox2.Checked = false;
+                            _firstSleep = false;
+                            textBox1.Text = "Waking Up!";
+                            break;
+                    }
                     break;
                 default:
                     break;
@@ -213,10 +244,58 @@ namespace COMDataStream
             {
                 _viewModel.AddItem(f);
             }
-            
+
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                try
+                {
+                    _serialPort.Write(new byte[] { 0xC4, 0x00 }, 0, 2);
+                    _serialPort.Write("\n");
+                }
+                catch
+                {
+                    textBox1.Text = "No Serial Port Connected!";
+                    checkBox2.Checked = false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    _serialPort.Write(new byte[] { 0xC4, 0x01 }, 0, 2);
+                    _serialPort.Write("\n");
+                }
+                catch
+                {
+                    textBox1.Text = "No Serial Port Connected!";
+                    checkBox2.Checked = false;
+                }
+            }
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked)
+            {
+                if (textBox2.Text == "") saveFileDialog1.ShowDialog(this);
+            }
+        }
+
+        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            textBox2.Text = saveFileDialog1.FileName;
         }
 
 
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.ShowDialog(this);
+        }
     }
 
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VauxyEgFaFudf8RbC6xOt4QImfNxWNYIGxJVsGC5rjCVpQwDvWQ1D+F5b0KvTuJ4I+jRleQWGEBFwg5+QjQNYA==",
+  "dgSpecHash": "l8QAgLSW9wRl3la/BfM2mPT9Uti8cgRilUgnNJK3+4/EhAemNPBUl0/+AmDm4/9p+El2W6AHdgVWZUHUI2PmIQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\ArduinoSketches\\TOF\\COMDataStream\\COMDataStream.csproj",
+  "projectFilePath": "C:\\Users\\Joe\\Documents\\Freelancing\\Lee Moradi\\Train of Four\\Software\\TOF\\GUI_Build\\COMDataStream.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Joe\\.nuget\\packages\\communitytoolkit.mvvm\\8.1.0\\communitytoolkit.mvvm.8.1.0.nupkg.sha512",
     "C:\\Users\\Joe\\.nuget\\packages\\harfbuzzsharp\\2.8.2.3\\harfbuzzsharp.2.8.2.3.nupkg.sha512",

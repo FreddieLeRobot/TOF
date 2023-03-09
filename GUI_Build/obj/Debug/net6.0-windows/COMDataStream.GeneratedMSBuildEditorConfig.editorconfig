@@ -14,4 +14,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = COMDataStream
-build_property.ProjectDir = C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\ArduinoSketches\TOF\COMDataStream\
+build_property.ProjectDir = C:\Users\Joe\Documents\Freelancing\Lee Moradi\Train of Four\Software\TOF\GUI_Build\

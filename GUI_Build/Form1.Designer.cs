@@ -44,6 +44,11 @@ namespace COMDataStream
             button3 = new Button();
             checkBox2 = new CheckBox();
             label6 = new Label();
+            checkBox3 = new CheckBox();
+            saveFileDialog1 = new SaveFileDialog();
+            label7 = new Label();
+            textBox2 = new TextBox();
+            button4 = new Button();
             SuspendLayout();
             // 
             // comboBox1
@@ -161,11 +166,12 @@ namespace COMDataStream
             // 
             // button3
             // 
-            button3.Location = new Point(358, 51);
+            button3.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            button3.Location = new Point(349, 52);
             button3.Name = "button3";
-            button3.Size = new Size(75, 23);
+            button3.Size = new Size(84, 23);
             button3.TabIndex = 14;
-            button3.Text = "Reset";
+            button3.Text = "Reset Graph";
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
@@ -179,6 +185,7 @@ namespace COMDataStream
             checkBox2.TabIndex = 15;
             checkBox2.Text = "Sleep";
             checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
             // 
             // label6
             // 
@@ -190,12 +197,59 @@ namespace COMDataStream
             label6.TabIndex = 16;
             label6.Text = "Charging";
             // 
+            // checkBox3
+            // 
+            checkBox3.AutoSize = true;
+            checkBox3.ForeColor = SystemColors.ButtonFace;
+            checkBox3.Location = new Point(762, 23);
+            checkBox3.Name = "checkBox3";
+            checkBox3.Size = new Size(97, 19);
+            checkBox3.TabIndex = 17;
+            checkBox3.Text = "Data Logging";
+            checkBox3.UseVisualStyleBackColor = true;
+            checkBox3.CheckedChanged += checkBox3_CheckedChanged;
+            // 
+            // saveFileDialog1
+            // 
+            saveFileDialog1.FileOk += saveFileDialog1_FileOk;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.ForeColor = SystemColors.ButtonFace;
+            label7.Location = new Point(762, 55);
+            label7.Name = "label7";
+            label7.Size = new Size(52, 15);
+            label7.TabIndex = 18;
+            label7.Text = "Filepath:";
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(820, 48);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(280, 23);
+            textBox2.TabIndex = 19;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(1103, 48);
+            button4.Name = "button4";
+            button4.Size = new Size(24, 23);
+            button4.TabIndex = 20;
+            button4.Text = "...";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             ClientSize = new Size(1184, 761);
+            Controls.Add(button4);
+            Controls.Add(textBox2);
+            Controls.Add(label7);
+            Controls.Add(checkBox3);
             Controls.Add(label6);
             Controls.Add(checkBox2);
             Controls.Add(button3);
@@ -232,5 +286,10 @@ namespace COMDataStream
         private Button button3;
         private CheckBox checkBox2;
         private Label label6;
+        private CheckBox checkBox3;
+        private SaveFileDialog saveFileDialog1;
+        private Label label7;
+        private TextBox textBox2;
+        private Button button4;
     }
 }
