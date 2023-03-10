@@ -5,7 +5,7 @@
 
 // Constants - Change these as testing allows
 const int wakeThreshold = 950;  // Threshold on analog reading to make sure the device stays awake.
-const int sleepTime = 300000;    // Threshold (milliseconds) for program to stay on with no activity before falling asleep.
+const int sleepTime = 300000;   // Threshold (milliseconds) for program to stay on with no activity before falling asleep.
 
 // Startup Variables
 bool isOn = 0;
@@ -41,10 +41,17 @@ float RunningAverageBuffer[RunningAverageCount];
 int NextRunningAverage;
 
 // Messenger definitions and uses
-typedef enum { PRESSURE, CHARGING, BATT_VOLTAGE, SLEEPING} code;
-byte CHARGE[1] = {0xB1};
-byte NO_CHARGE[1] = {0xB0};
-byte LOW_CHARGE[1] = {0xB2};
+typedef enum { PRESSURE,
+               CHARGING,
+               BATT_VOLTAGE,
+               SLEEPING,
+               ERROR } code;
+                              
+typedef enum { WAKE,
+               SLEEP } command;
+byte CHARGE[1] = { 0xB1 };
+byte NO_CHARGE[1] = { 0xB0 };
+byte LOW_CHARGE[1] = { 0xB2 };
 
 
 
@@ -66,16 +73,19 @@ void setup() {
 
 void loop() {
 
+  // Check for any incoming serial commands
+  messageCheck();
   // Sleep Mode
   while (interrupt != 1) {
     delay(100);
     sensorVal = analogRead(sensorPin);
     if (sensorVal >= wakeThreshold) {
       wakeupRoutine();
-    }
-    else {
-      byte message[1] = {0x00};
+    } else {
+      byte message[1] = { 0x00 };
       Messenger(SLEEPING, message);
+      //Check for incoming message and act accordingly
+      messageCheck();
     }
   }
 
@@ -120,16 +130,14 @@ void batteryCheck() {
 
   if (RunningAverageVolts >= 3.8) {
     Messenger(CHARGING, CHARGE);
-  }
-  else if (RunningAverageVolts <= 3){
+  } else if (RunningAverageVolts <= 3) {
     Messenger(CHARGING, LOW_CHARGE);
-    byte hex[4] = {0};
+    byte hex[4] = { 0 };
     FloatToHex(RunningAverageVolts, hex);
     Messenger(BATT_VOLTAGE, hex);
-  }
-  else {
+  } else {
     Messenger(CHARGING, NO_CHARGE);
-    byte hex[4] = {0};
+    byte hex[4] = { 0 };
     FloatToHex(RunningAverageVolts, hex);
     Messenger(BATT_VOLTAGE, hex);
   }
@@ -140,12 +148,12 @@ void batteryCheck() {
 
 bool pressureCheck() {
 
-  byte press_hex[4] = {0};
+  byte press_hex[4] = { 0 };
 
   if (isOn == 0) {
-    isOn = 1; // Do something with this later
+    isOn = 1;  // Do something with this later
   }
-  
+
 
   sensorVal = analogRead(sensorPin);
   pressureVoltage = fmap(sensorVal, 0, 996, 0.000, 15.000);
@@ -175,8 +183,8 @@ void sleepCheck() {
 void wakeupRoutine() {
 
   Serial.println("Waking Up!");
-  byte message[1] = {0x01};
-  Messenger(SLEEPING, message); // Send message that device is waking up
+  byte message[1] = { 0x01 };
+  Messenger(SLEEPING, message);  // Send message that device is waking up
   // Blink LED to show user that device is back on.
   digitalWrite(testLED, HIGH);
   delay(100);
@@ -214,8 +222,8 @@ void goToSleep() {
   delay(300);
   digitalWrite(testLED, LOW);
   interrupt = 0;  // Set interrupt bit
-  byte message[1] = {0x00};
-  Messenger(SLEEPING, message); // Send message that device is sleeping
+  byte message[1] = { 0x00 };
+  Messenger(SLEEPING, message);  // Send message that device is sleeping
   // Turn off BLE functions?
 }
 
@@ -223,41 +231,69 @@ void Messenger(code type, byte* message) {
   switch (type) {
     case PRESSURE:
       Serial.print(0xC1, HEX);
-      for (int i = 3; i>=0; i--){
+      for (int i = 3; i >= 0; i--) {
         if (message[i] < 16) Serial.print("0");
-        Serial.print(message[i],HEX);
+        Serial.print(message[i], HEX);
       }
       Serial.println();
       break;
     case CHARGING:
-      Serial.print(0xC2,HEX);
+      Serial.print(0xC2, HEX);
       if (message[0] < 16) Serial.print("0");
-      Serial.print(message[0],HEX);
+      Serial.print(message[0], HEX);
       Serial.println();
       break;
     case BATT_VOLTAGE:
       Serial.print(0xC3, HEX);
-      for (int i = 0; i<=4; i++){
+      for (int i = 0; i <= 4; i++) {
         if (message[i] < 16) Serial.print("0");
-        Serial.print(message[i],HEX);
+        Serial.print(message[i], HEX);
       }
       Serial.println();
       break;
     case SLEEPING:
       Serial.print(0xC4, HEX);
       if (message[0] < 16) Serial.print("0");
-      Serial.print(message[0],HEX);
+      Serial.print(message[0], HEX);
+      Serial.println();
+      break;
+    case ERROR:
+      Serial.print(0xC0, HEX);
+      if (message[0] < 16) Serial.print("0");
+      Serial.print(message[0], HEX);
       Serial.println();
       break;
   }
+}
+
+void messageCheck() {
+
+  while (Serial.available()) {
+    //Commands from bluetooth devices and serial are simple and only need 2 bytes
+    byte data[2];
+
+    Serial.readBytes(data,2);
+
+      if (data[0] == 0xC4) {
+
+        if (data[1] == 0x00) {
+          goToSleep();
+        } 
+        else if (data[1] == 0x01) {
+          wakeupRoutine();
+        } 
+        else {
+          Messenger(ERROR, 0x00);
+        }
+    }
+  }  
 }
 
 float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-byte FloatToHex(float f, byte* hex){
+byte FloatToHex(float f, byte* hex) {
   byte* f_byte = reinterpret_cast<byte*>(&f);
   memcpy(hex, f_byte, 4);
 }
-
