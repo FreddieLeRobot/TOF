@@ -32,7 +32,7 @@ namespace COMDataStream
         {
             comboBox1 = new ComboBox();
             label1 = new Label();
-            button1 = new Button();
+            connButton = new Button();
             button2 = new Button();
             label2 = new Label();
             label3 = new Label();
@@ -71,15 +71,15 @@ namespace COMDataStream
             label1.TabIndex = 1;
             label1.Text = "COM Port";
             // 
-            // button1
+            // connButton
             // 
-            button1.Location = new Point(139, 51);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 2;
-            button1.Text = "Connect";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            connButton.Location = new Point(139, 51);
+            connButton.Name = "connButton";
+            connButton.Size = new Size(75, 23);
+            connButton.TabIndex = 2;
+            connButton.Text = "Connect";
+            connButton.UseVisualStyleBackColor = true;
+            connButton.Click += connButton_Click;
             // 
             // button2
             // 
@@ -261,7 +261,7 @@ namespace COMDataStream
             Controls.Add(label2);
             Controls.Add(textBox1);
             Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(connButton);
             Controls.Add(label1);
             Controls.Add(comboBox1);
             Name = "Form1";
@@ -291,5 +291,6 @@ namespace COMDataStream
         private Label label7;
         private TextBox textBox2;
         private Button button4;
+        private Button connButton;
     }
 }

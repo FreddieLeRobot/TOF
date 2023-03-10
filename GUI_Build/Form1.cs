@@ -56,33 +56,7 @@ namespace COMDataStream
                 }
             };
 
-            //_cartesianChart.XAxes = new List<Axis> {
-            //    new Axis
-            //    {
-            //        Labeler = value => new DateTime((long) value).ToString("MMMM dd"),
-            //        Name = "Pressure",
-            //        NamePaint = new SolidColorPaint(SKColors.GhostWhite),
-
-            //        LabelsPaint = new SolidColorPaint(SKColors.WhiteSmoke),
-            //        TextSize = 20,
-
-            //        MaxLimit = 8000,
-            //        MinLimit = 20, // Set zoom when a COM port handshake is called.
-            //        MinStep = 5,
-
-            //        LabelsRotation = 15,
-            //         //set the unit width of the axis to "days"
-            //         //since our X axis is of type date time and 
-            //         //the interval between our points is in days
-            //        UnitWidth = TimeSpan.FromDays(1).Ticks,
-
-            //        SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
-            //        {
-            //            StrokeThickness = 2,
-            //            PathEffect = new DashEffect(new float[] { 3, 3 })
-            //        }
-            //    }
-            //};
+            // XAxis is fed datetime data, so it is it's own public Axis[] in Form 1_1
 
             _cartesianChart.DrawMarginFrame = new DrawMarginFrame
             {
@@ -119,7 +93,7 @@ namespace COMDataStream
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void connButton_Click(object sender, EventArgs e)
         {
             string port = comboBox1.SelectedItem.ToString();
             textBox1.Text = "Connecting to " + port + "...";
@@ -130,6 +104,8 @@ namespace COMDataStream
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(sp_DataReceived);
             _serialPort.ReadTimeout = 1000;
             _serialPort.WriteTimeout = 1000;
+            checkBox3.Enabled = false;
+            connButton.Enabled = false;
 
             //Thread.Sleep(1000);
             try
@@ -169,6 +145,8 @@ namespace COMDataStream
         private void button2_Click(object sender, EventArgs e)
         {
             _serialPort.Close();
+            checkBox3.Enabled = true;
+            connButton.Enabled = true;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -254,7 +232,7 @@ namespace COMDataStream
                 try
                 {
                     _serialPort.Write(new byte[] { 0xC4, 0x00 }, 0, 2);
-                    _serialPort.Write("\n");
+                    //_serialPort.Write("\n");
                 }
                 catch
                 {
@@ -267,7 +245,7 @@ namespace COMDataStream
                 try
                 {
                     _serialPort.Write(new byte[] { 0xC4, 0x01 }, 0, 2);
-                    _serialPort.Write("\n");
+                    //_serialPort.Write("\n");
                 }
                 catch
                 {
@@ -289,7 +267,6 @@ namespace COMDataStream
         {
             textBox2.Text = saveFileDialog1.FileName;
         }
-
 
 
         private void button4_Click(object sender, EventArgs e)
