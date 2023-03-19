@@ -1,5 +1,7 @@
 ﻿
 
+using System.Windows.Forms;
+
 namespace COMDataStream
 {
     partial class Form1
@@ -211,6 +213,9 @@ namespace COMDataStream
             // 
             // saveFileDialog1
             // 
+            saveFileDialog1.CreatePrompt = true;
+            saveFileDialog1.Filter = "Text files (*.txt)|*.txt|Comma Seperated Value Files (*.csv)|*.csv|All files (*.*)|*.*";
+            saveFileDialog1.OverwritePrompt = false;
             saveFileDialog1.FileOk += saveFileDialog1_FileOk;
             // 
             // label7

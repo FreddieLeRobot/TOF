@@ -61,7 +61,7 @@ public partial class ViewModel
             Labeler = value => new DateTime((long) value).ToString("MM/dd hh:mm:ss:ff"),
             LabelsRotation = 20,
             
-            Name = "Pressure",
+            Name = "Time",
             NamePaint = new SolidColorPaint(SKColors.GhostWhite),
 
             LabelsPaint = new SolidColorPaint(SKColors.WhiteSmoke),
