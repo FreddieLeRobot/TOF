@@ -1,4 +1,8 @@
 // TOF Software V.0.0.2
+
+
+
+
 // JFM - 20JAN23
 //
 
@@ -14,6 +18,7 @@ bool interrupt = 1;
 // Timing variables
 int sleepTimerStart = millis();  // As name implies, timer value that starts when timing for sleep
 int activeCheck = millis();      // Timer value to compare to sleepTimerStart
+int cycleTimer = millis();
 bool resetTimer = 0;
 
 // Battery pin setup
@@ -73,6 +78,8 @@ void setup() {
 
 void loop() {
 
+  //Start cycle
+    cycleTimer = millis();
   // Check for any incoming serial commands
   messageCheck();
   // Sleep Mode
@@ -107,6 +114,7 @@ void loop() {
   // Manage all timer/interrupt/counter values
   battCounter += 1;
   sleepCheck();
+  cycleCheck();
 }
 
 void batteryCheck() {
@@ -116,7 +124,7 @@ void batteryCheck() {
   digitalWrite(battCtrl, HIGH);
   delay(100);  // Slight delay to let voltage settle - may change this later.
   battVal = analogRead(battPin);
-  battVoltage = fmap(battVal, 0, 975, 0.0, 4);
+  battVoltage = fmap(battVal, 0, 975, 0.0, 4.0);
 
   RunningAverageBuffer[NextRunningAverage++] = battVoltage;
   if (NextRunningAverage >= RunningAverageCount) {
@@ -128,17 +136,21 @@ void batteryCheck() {
   }
   RunningAverageVolts /= RunningAverageCount;
 
-  if (RunningAverageVolts >= 3.8) {
+  if (battVoltage >= 4.0) {
     Messenger(CHARGING, CHARGE);
-  } else if (RunningAverageVolts <= 3) {
+    byte hex[4] = { 0 };
+    FloatToHex(battVoltage, hex);
+    Messenger(BATT_VOLTAGE, hex);
+    
+  } else if (battVoltage <= 3) {
     Messenger(CHARGING, LOW_CHARGE);
     byte hex[4] = { 0 };
-    FloatToHex(RunningAverageVolts, hex);
+    FloatToHex(battVoltage, hex);
     Messenger(BATT_VOLTAGE, hex);
   } else {
     Messenger(CHARGING, NO_CHARGE);
     byte hex[4] = { 0 };
-    FloatToHex(RunningAverageVolts, hex);
+    FloatToHex(battVoltage, hex);
     Messenger(BATT_VOLTAGE, hex);
   }
 
@@ -178,6 +190,37 @@ bool pressureCheck() {
 void sleepCheck() {
   activeCheck = millis();
   if ((activeCheck - sleepTimerStart) >= sleepTime) goToSleep();
+}
+
+void messageCheck() {
+
+  while (Serial.available()) {
+    //Commands from bluetooth devices and serial are simple and only need 2 bytes
+    byte data[2];
+
+    Serial.readBytes(data,2);
+
+      if (data[0] == 0xC4) {
+
+        if (data[1] == 0x00) {
+          goToSleep();
+        } 
+        else if (data[1] == 0x01) {
+          wakeupRoutine();
+        } 
+        else {
+          byte message[1] = { 0x01 };
+          Messenger(ERROR, message);
+        }
+    }
+  }  
+}
+
+void cycleCheck() {
+  activeCheck = millis();
+  while (activeCheck - cycleTimer < 5){
+    activeCheck = millis();
+  }
 }
 
 void wakeupRoutine() {
@@ -245,7 +288,7 @@ void Messenger(code type, byte* message) {
       break;
     case BATT_VOLTAGE:
       Serial.print(0xC3, HEX);
-      for (int i = 0; i <= 4; i++) {
+      for (int i = 3; i >= 0; i--) {
         if (message[i] < 16) Serial.print("0");
         Serial.print(message[i], HEX);
       }
@@ -264,29 +307,6 @@ void Messenger(code type, byte* message) {
       Serial.println();
       break;
   }
-}
-
-void messageCheck() {
-
-  while (Serial.available()) {
-    //Commands from bluetooth devices and serial are simple and only need 2 bytes
-    byte data[2];
-
-    Serial.readBytes(data,2);
-
-      if (data[0] == 0xC4) {
-
-        if (data[1] == 0x00) {
-          goToSleep();
-        } 
-        else if (data[1] == 0x01) {
-          wakeupRoutine();
-        } 
-        else {
-          Messenger(ERROR, 0x00);
-        }
-    }
-  }  
 }
 
 float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
