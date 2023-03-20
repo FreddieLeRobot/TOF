@@ -12,7 +12,6 @@ BLEService ledService("180A");  // BLE LED Service
 
 
 // BLE LED Switch Characteristic - custom 128-bit UUID, read and writable by central
-
 BLEByteCharacteristic switchCharacteristic("2A58", BLERead | BLEWrite);
 
 void setup() {
@@ -22,7 +21,7 @@ void setup() {
 
   // set LED's pin to output mode
   pinMode(testLED, OUTPUT);
-  digitalWrite(testLED, LOW);  // when the central disconnects, turn off the LED
+  digitalWrite(testLED, LOW);  // when the central disconnects, turn on the LED
 
   // begin initialization
   if (!BLE.begin()) {
@@ -80,6 +79,7 @@ void loop() {
             break;
         }
       }
+      delay(000);
     }
 
     // when the central disconnects, print it out:
