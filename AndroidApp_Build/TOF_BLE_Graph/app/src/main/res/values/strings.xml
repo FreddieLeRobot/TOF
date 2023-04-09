@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TOF_BLE_Graph</string>
+
+    <!-- Strings for Text Views -->
+    <string name="DataLabel">Data:</string>
+    <string name="sourceLabel">Source:</string>
+    <string name="defaultData">Data from device goes here.</string>
+
+    <!-- Strings for Buttons -->
+    <string name="pause">Pause/Continue</string>
+    <string name="resetGraphButton">Reset Graph</string>
+
+
+    <!-- Content Descriptions -->
+    <string name="ble_button1">Ble Menu Open</string>
+    <string name="ble_button2">Ble Connect</string>
+    <string name="ble_button3">Ble Disconnect</string>
+    <string name="pauseBtnDesc">Pause/Resume Data Logging</string>
+    <string name="spinnerDesc">Discovered BLE Devices</string>
+
+</resources>

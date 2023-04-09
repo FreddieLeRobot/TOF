@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Text Views-->
+    <TextView
+        android:id="@+id/dataLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/DataLabel"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/DataBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/back"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="5dp"
+        android:text="@string/defaultData"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dataLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dataLabel"
+        app:layout_constraintTop_toTopOf="@+id/dataLabel" />
+
+    <TextView
+        android:id="@+id/sourceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/sourceLabel"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/dataLabel"
+        app:layout_constraintTop_toBottomOf="@+id/dataLabel" />
+
+
+
+    <!--Spinners (Dropdown menus)-->
+    <Spinner
+        android:id="@+id/BleDrop"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/spinnerDesc"
+        app:layout_constraintEnd_toEndOf="@+id/DataBox"
+        app:layout_constraintStart_toEndOf="@+id/dataLabel"
+        app:layout_constraintTop_toBottomOf="@+id/DataBox" />
+
+
+    <!-- Buttons-->
+    <Button
+        android:id="@+id/button_stop"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="70dp"
+        android:text="@string/pause"
+        android:contentDescription="@string/pauseBtnDesc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/reset_graph"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:width="170dp"
+        android:text="@string/resetGraphButton"
+        app:layout_constraintStart_toStartOf="@+id/button_stop"
+        app:layout_constraintTop_toBottomOf="@+id/button_stop" />
+
+    <!-- Floating Action Buttons-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bleOptions_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:contentDescription="@string/ble_button1"
+        android:focusable="true"
+        android:tintMode="src_in"
+        app:backgroundTint="#683434"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bleConnect_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/ble_button2"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:backgroundTint="#3A5ACC"
+        app:layout_constraintBottom_toTopOf="@id/bleOptions_btn"
+        app:layout_constraintEnd_toEndOf="@id/bleOptions_btn"
+        app:srcCompat="@drawable/ic_ble_connect"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bleDisconnect_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/ble_button3"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:backgroundTint="#686262"
+        app:layout_constraintBottom_toTopOf="@+id/bleConnect_btn"
+        app:layout_constraintEnd_toEndOf="@+id/bleConnect_btn"
+        app:srcCompat="@drawable/ic_ble_disconnect"
+        app:tint="@color/white" />
+
+    <!-- Line Chart -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_stop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BleDrop" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
