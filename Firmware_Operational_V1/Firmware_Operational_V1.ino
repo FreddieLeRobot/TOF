@@ -8,7 +8,7 @@
 
 // Constants - Change these as testing allows
 const int wakeThreshold = 950;  // Threshold on analog reading to make sure the device stays awake.
-const int sleepTime = 3000000;  // Threshold (milliseconds) for program to stay on with no activity before falling asleep.
+const int sleepTime = 3600000;  // Threshold (milliseconds) for program to stay on with no activity before falling asleep.
 
 // Startup Variables
 bool isOn = 0;
