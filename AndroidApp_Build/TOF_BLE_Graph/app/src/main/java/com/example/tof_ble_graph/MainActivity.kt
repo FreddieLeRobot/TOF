@@ -448,12 +448,14 @@ class MainActivity : AppCompatActivity() {
         //Do not want to highlight, only pan/scroll/zoom
         isHighlightPerTapEnabled = false
         isHighlightPerDragEnabled = false
+
     }
 
     private fun resetLineChartData() {
 
+        lineChart.clearValues()
         lineData.clear()
-        lineChart.data = null
+        //lineChart.data = null
         lineChart.invalidate()
 
     }
@@ -467,12 +469,15 @@ class MainActivity : AppCompatActivity() {
             lineData.add(Entry(index, fl))
 
             _lineDataSet = LineDataSet(lineData, CHART_LABEL)
+            _lineDataSet.setDrawCircles(false)
+
 
             lineChartUpdate()
     }
 
     private fun lineChartUpdate(){
         lineChart.data = LineData(_lineDataSet)
+        lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     }
 
