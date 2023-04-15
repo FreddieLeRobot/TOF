@@ -148,9 +148,7 @@ class MainActivity : AppCompatActivity() {
         override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
             when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
-                        runOnUiThread{
-                            Toast.makeText(this@MainActivity, "Enabled Notifications for pressure!", Toast.LENGTH_SHORT).show()
-                        }
+                        // TODO: Handle different descriptor writes as the app subscribes to more services.
                     }
             }
         }
@@ -239,7 +237,6 @@ class MainActivity : AppCompatActivity() {
             onBleConnectClicked()
         }
         bleDisconnectBtn.setOnClickListener{
-            Toast.makeText(this, "Disconnecting BLE Device...", Toast.LENGTH_SHORT).show()
             onBleDisconnectClicked()
         }
 
@@ -259,7 +256,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         resetBtn.setOnClickListener{
-            // Todo: change this listener to clear data from chart once live data is implemented
             resetLineChartData()
         }
 
@@ -353,7 +349,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun connectToBLE(device: ScanResult) {
-        // TODO: Implement connection
         with(device.device){
             Log.w("BluetoothLE", "Connecting to $address")
             connectGatt(this@MainActivity,false, gattCallback, BluetoothDevice.TRANSPORT_LE)
@@ -361,10 +356,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onBleDisconnectClicked(){
+        if (this::bluetoothGatt.isInitialized){
+            Toast.makeText(this, "Disconnecting BLE Device...", Toast.LENGTH_SHORT).show()
+        bluetoothGatt.disconnect()
+        }
+        else {
+            Toast.makeText(this, "No BLE Device Connected!", Toast.LENGTH_SHORT).show()
+        }
         if (!isScanning){
             startBleScan()
         }
-        // TODO: Implement actual BLE disconnect function
     }
 
     // Functions for Bluetooth button animations
@@ -455,7 +456,6 @@ class MainActivity : AppCompatActivity() {
 
         lineChart.clearValues()
         lineData.clear()
-        //lineChart.data = null
         lineChart.invalidate()
 
     }
@@ -478,7 +478,9 @@ class MainActivity : AppCompatActivity() {
     private fun lineChartUpdate(){
         lineChart.data = LineData(_lineDataSet)
         lineChart.notifyDataSetChanged()
-        lineChart.invalidate()
+        lineChart.setVisibleXRangeMaximum(3000F)
+        lineChart.setVisibleXRangeMinimum(3000F)
+        lineChart.moveViewToX(_lineDataSet.xMax)
     }
 
     // BLE Functions
