@@ -9,6 +9,7 @@
     <!-- Strings for Buttons -->
     <string name="pause">Pause/Continue</string>
     <string name="resetGraphButton">Reset Graph</string>
+    <string name="sleepToggle">Sleep</string>
 
 
     <!-- Content Descriptions -->

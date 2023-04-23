@@ -37,8 +37,8 @@ BLEService tofService("180A");  // BLE time. 180A = "Device Information Service"
 bool bleConnected = false;
 
 // BLE Characteristics Setup
-BLEByteCharacteristic sleepCharacteristic("2B42", BLERead | BLEWrite | BLENotify);  // 2B41 = "Sleep Activity Summary Data"
-BLECharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify, 4);           // 2B41 = "Pressure"
+BLEByteCharacteristic sleepCharacteristic("2B42", BLERead | BLEWrite | BLENotify);  // 2B42 = "Sleep Activity Summary Data"
+BLECharacteristic pressureCharacteristic("2A6D", BLERead | BLENotify, 4);           // 2A6D = "Pressure"
 BLEByteCharacteristic chargingCharacteristic("2B06", BLERead | BLENotify);          // 2BED = "Power Specification"
 BLECharacteristic batteryCharacteristic("2A19", BLERead | BLENotify, 4);            // 2A19 = "Battery Level"
 BLEByteCharacteristic errorCharacteristic("2A4D", BLERead | BLEWrite | BLENotify);  // 2A4D = "Report"

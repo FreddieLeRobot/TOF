@@ -40,6 +40,7 @@ private const val RUNTIME_PERMISSION_REQUEST_CODE = 2
 private const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
 private const val DEVICEINFO_SERV_UUID = "0000180a-0000-1000-8000-00805f9b34fb"
 private const val PRESSURE_CHAR_UUID = "00002a6d-0000-1000-8000-00805f9b34fb"
+private const val SLEEP_CHAR_UUID = "00002B42-0000-1000-8000-00805f9b34fb"
 
 class MainActivity : AppCompatActivity() {
 
@@ -144,6 +145,28 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        override fun onCharacteristicWrite(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            status: Int
+        ) {
+            with(characteristic) {
+                when (status) {
+                    BluetoothGatt.GATT_SUCCESS -> {
+                        Log.i("BluetoothGattCallback", "Wrote to characteristic $uuid | value: ${value.toHex()}")
+                    }
+                    BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH -> {
+                        Log.e("BluetoothGattCallback", "Write exceeded connection ATT MTU!")
+                    }
+                    BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
+                        Log.e("BluetoothGattCallback", "Write not permitted for $uuid!")
+                    }
+                    else -> {
+                        Log.e("BluetoothGattCallback", "Characteristic write failed for $uuid, error: $status")
+                    }
+                }
+            }
+        }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
             when (status) {
@@ -192,6 +215,9 @@ class MainActivity : AppCompatActivity() {
     // Declare buttons for chart
     lateinit var pauseBtn: Button
     lateinit var resetBtn: Button
+
+    //Declare buttons for functionality
+    lateinit var sleepBtn: ToggleButton
 
     // Declare textview for data entry
     lateinit var dataText: TextView
@@ -243,6 +269,7 @@ class MainActivity : AppCompatActivity() {
         // init Btns
         pauseBtn = findViewById(R.id.button_stop)
         resetBtn = findViewById(R.id.reset_graph)
+        sleepBtn = findViewById(R.id.sleep_toggle)
 
         //Listeners for btns
         pauseBtn.setOnClickListener{
@@ -257,6 +284,10 @@ class MainActivity : AppCompatActivity() {
         }
         resetBtn.setOnClickListener{
             resetLineChartData()
+        }
+
+        sleepBtn.setOnClickListener {
+            onSleepToggle()
         }
 
         // Init spinner
@@ -331,6 +362,22 @@ class MainActivity : AppCompatActivity() {
         setAnimation(bleClicked)
         setClickable(bleClicked)
         bleClicked = !bleClicked
+    }
+
+    private fun onSleepToggle() {
+        val sleepUuid = UUID.fromString(SLEEP_CHAR_UUID)
+        val deviceInfoUuid = UUID.fromString(DEVICEINFO_SERV_UUID)
+        val sleepChar = bluetoothGatt
+            .getService(deviceInfoUuid).getCharacteristic(sleepUuid)
+        var payload = byteArrayOf(0x00)
+        // Change payload number for sleep value depending on sleep value.
+        if (sleepBtn.isChecked){
+            // Do nothing
+        }
+        else {
+            payload = byteArrayOf(0x01)
+        }
+        writeBLESleep(sleepChar,payload)
     }
 
     private fun onBleConnectClicked(){
@@ -555,8 +602,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // BLE Writes
-    private fun writeBLESleep(){
+    private fun writeBLESleep(characteristic: BluetoothGattCharacteristic, payload: ByteArray) {
         // TODO: Write value for sleep
+        val writeType = when {
+            characteristic.isWritable() -> BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            characteristic.isWritableWithoutResponse() -> {
+                BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+            }
+            else -> error("Characteristic ${characteristic.uuid} cannot be written to")
+        }
+        bluetoothGatt.let { gatt ->
+            characteristic.writeType = writeType
+            characteristic.value = payload
+            gatt.writeCharacteristic(characteristic)
+        } ?: error("Not Connected to BLE device!")
     }
 
 
