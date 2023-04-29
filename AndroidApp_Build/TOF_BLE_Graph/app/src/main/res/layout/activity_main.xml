@@ -155,4 +155,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_stop"
         app:layout_constraintStart_toEndOf="@+id/button_stop" />
 
+    <ToggleButton
+        android:id="@+id/log_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/logToggle"
+        android:textOff="@string/logToggle"
+        android:textOn="@string/logToggle"
+        app:layout_constraintStart_toEndOf="@+id/reset_graph"
+        app:layout_constraintTop_toBottomOf="@+id/sleep_toggle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

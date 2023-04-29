@@ -27,10 +27,12 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.time.LocalDateTime
 import java.util.*
-import kotlin.concurrent.thread
 
 private const val CHART_LABEL = "DATA_CHART"
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
@@ -43,6 +45,17 @@ private const val PRESSURE_CHAR_UUID = "00002a6d-0000-1000-8000-00805f9b34fb"
 private const val SLEEP_CHAR_UUID = "00002B42-0000-1000-8000-00805f9b34fb"
 
 class MainActivity : AppCompatActivity() {
+
+    // CSV Data Type for writer
+    data class DataLog(
+        var time: LocalDateTime,
+        var pressure: Float,
+        var sleep: Boolean
+    )
+
+    lateinit var filename: String
+
+    var movingAvg = 0.00f
 
     // Bluetooth low energy variables
     private val bleScanner by lazy {
@@ -95,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                     Log.w("BluetoothGattCallback", "Successfully connected to $deviceAddress")
                     bluetoothGatt = gatt
                     Handler(Looper.getMainLooper()).post {
-                        bluetoothGatt?.discoverServices()
+                        bluetoothGatt.discoverServices()
                     }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     Log.w("BluetoothGattCallback", "Successfully disconnected from $deviceAddress")
@@ -218,6 +231,7 @@ class MainActivity : AppCompatActivity() {
 
     //Declare buttons for functionality
     lateinit var sleepBtn: ToggleButton
+    lateinit var logBtn: ToggleButton
 
     // Declare textview for data entry
     lateinit var dataText: TextView
@@ -270,6 +284,8 @@ class MainActivity : AppCompatActivity() {
         pauseBtn = findViewById(R.id.button_stop)
         resetBtn = findViewById(R.id.reset_graph)
         sleepBtn = findViewById(R.id.sleep_toggle)
+        logBtn = findViewById(R.id.log_toggle)
+
 
         //Listeners for btns
         pauseBtn.setOnClickListener{
@@ -288,6 +304,10 @@ class MainActivity : AppCompatActivity() {
 
         sleepBtn.setOnClickListener {
             onSleepToggle()
+        }
+
+        logBtn.setOnClickListener {
+            onLogToggle()
         }
 
         // Init spinner
@@ -372,12 +392,25 @@ class MainActivity : AppCompatActivity() {
         var payload = byteArrayOf(0x00)
         // Change payload number for sleep value depending on sleep value.
         if (sleepBtn.isChecked){
-            // Do nothing
+            log(filename,0.00f,true)
         }
         else {
             payload = byteArrayOf(0x01)
         }
         writeBLESleep(sleepChar,payload)
+    }
+
+    private fun onLogToggle(){
+        val csvName = "TOF_Data_" + LocalDateTime.now().toString() + ".csv"
+        filename = csvName
+        FileOutputStream(csvName).apply{createCsv()}
+    }
+
+    private fun log(filename: String, pressure: Float, sleep: Boolean){
+        if (logBtn.isChecked) {
+            val logInfo = DataLog(LocalDateTime.now(),pressure, sleep)
+            FileOutputStream(filename).apply { writeCsv(logInfo) }
+        }
     }
 
     private fun onBleConnectClicked(){
@@ -386,7 +419,6 @@ class MainActivity : AppCompatActivity() {
         }
         if (!spinner.selectedItem.toString().isNullOrEmpty()){
             val text = spinner.selectedItem.toString()
-            val device: ScanResult
             scanResults.forEach {
                 if (text == it.device.name){
                     connectToBLE(it)
@@ -463,8 +495,8 @@ class MainActivity : AppCompatActivity() {
         adapter = ArrayAdapter<String>(
             applicationContext,
         android.R.layout.simple_spinner_item, list)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.adapter = adapter;
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
     }
 
     // Function for data box
@@ -511,6 +543,9 @@ class MainActivity : AppCompatActivity() {
             var index = 0f
             if (lineData.isNotEmpty()) {
                 index = lineData.last().x + 1f
+                if (index >= 10){
+                    peakAndAvgCheck(fl)
+                }
             }
 
             lineData.add(Entry(index, fl))
@@ -589,7 +624,7 @@ class MainActivity : AppCompatActivity() {
         containsProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
 
 
-    // BLE Reads
+    // BLE Reads (May be used later)
     private fun readBLEPressure() {
 
         val pressureUuid = UUID.fromString(PRESSURE_CHAR_UUID)
@@ -681,11 +716,12 @@ class MainActivity : AppCompatActivity() {
 
     // Data Handlers
     private fun pressureHandler(readBytesPressure: ByteArray) {
-        updateDataBox("Pressure Data: " + readBytesPressure.toHex().toString())
+        updateDataBox("Pressure Data: " + readBytesPressure.toHex())
         //thread(name = "Thread-LineChart") {
         //    lineChartAddData(readBytesPressure.toFloat())
         //}
         lineChartAddData(readBytesPressure.toFloat())
+        log(filename,readBytesPressure.toFloat(),false)
     }
 
     //Check for permissions
@@ -739,10 +775,32 @@ class MainActivity : AppCompatActivity() {
     // Byte Array Manipulation
     fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
 
-    fun ByteArray.toFloat(): Float {
+    private fun ByteArray.toFloat(): Float {
         val buffer = ByteBuffer.wrap(this)
             .order(ByteOrder.LITTLE_ENDIAN)
         return buffer.float
+    }
+
+
+    // CSV Writing functions
+    private fun OutputStream.writeCsv(dataLog: DataLog){
+        val writer = bufferedWriter()
+        writer.write("${dataLog.time},${dataLog.pressure},${dataLog.sleep}")
+        writer.newLine()
+        writer.flush()
+    }
+
+    private fun OutputStream.createCsv(){
+        val writer = bufferedWriter()
+        writer.write("Date/Time,Pressure,Sleep Mode")
+        writer.newLine()
+        writer.flush()
+    }
+
+    // Peak detection and baseline averaging functions
+    private fun peakAndAvgCheck(float: Float){
+        // TODO: Check for baseline average and calculate baseline average from latest data
+        // TODO: Determine peaks and count peaks. Determine ratio between subsequent peaks
     }
 
 }
