@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -27,7 +28,9 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         var sleep: Boolean
     )
 
-    lateinit var filename: String
+    lateinit var writeFile: File
 
     var movingAvg = 0.00f
 
@@ -392,7 +395,9 @@ class MainActivity : AppCompatActivity() {
         var payload = byteArrayOf(0x00)
         // Change payload number for sleep value depending on sleep value.
         if (sleepBtn.isChecked){
-            log(filename,0.00f,true)
+            if (logBtn.isChecked) {
+                log(writeFile, 0.00f, true)
+            }
         }
         else {
             payload = byteArrayOf(0x01)
@@ -401,16 +406,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onLogToggle(){
-        val csvName = "TOF_Data_" + LocalDateTime.now().toString() + ".csv"
-        filename = csvName
-        FileOutputStream(csvName).apply{createCsv()}
+        // TODO: Add back in datetime to filename
+        val csvName = "TOF_Data_" + ".csv"
+        val fileCreated = createFile(csvName)
+        if (fileCreated.isFile) {
+            writeFile = fileCreated
+            FileOutputStream(writeFile).apply { createCsv() }
+        }
     }
 
-    private fun log(filename: String, pressure: Float, sleep: Boolean){
-        if (logBtn.isChecked) {
+    private fun log(file: File, pressure: Float, sleep: Boolean){
             val logInfo = DataLog(LocalDateTime.now(),pressure, sleep)
-            FileOutputStream(filename).apply { writeCsv(logInfo) }
-        }
+        val writer = FileWriter(file,true)
+        writer.write("${logInfo.time},${logInfo.pressure},${logInfo.sleep}")
+        writer.write(System.getProperty("line.separator"))
+        writer.flush()
     }
 
     private fun onBleConnectClicked(){
@@ -721,7 +731,9 @@ class MainActivity : AppCompatActivity() {
         //    lineChartAddData(readBytesPressure.toFloat())
         //}
         lineChartAddData(readBytesPressure.toFloat())
-        log(filename,readBytesPressure.toFloat(),false)
+        if(logBtn.isChecked) {
+            log(writeFile, readBytesPressure.toFloat(), false)
+        }
     }
 
     //Check for permissions
@@ -783,18 +795,23 @@ class MainActivity : AppCompatActivity() {
 
 
     // CSV Writing functions
-    private fun OutputStream.writeCsv(dataLog: DataLog){
-        val writer = bufferedWriter()
-        writer.write("${dataLog.time},${dataLog.pressure},${dataLog.sleep}")
-        writer.newLine()
-        writer.flush()
-    }
 
     private fun OutputStream.createCsv(){
-        val writer = bufferedWriter()
-        writer.write("Date/Time,Pressure,Sleep Mode")
-        writer.newLine()
-        writer.flush()
+            val writer = bufferedWriter()
+            writer.write("Date/Time,Pressure,Sleep Mode")
+            writer.newLine()
+            writer.flush()
+    }
+
+    private fun createFile(name:String):File{
+        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),name)
+
+        val isNewFileCreated: Boolean = file.createNewFile()
+
+        if(!isNewFileCreated) {
+            Log.e("FileOutputStream", "File could not be created successfully!")
+        }
+        return file
     }
 
     // Peak detection and baseline averaging functions
