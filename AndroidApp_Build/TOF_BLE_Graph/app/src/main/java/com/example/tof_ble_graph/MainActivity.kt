@@ -35,11 +35,15 @@ import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 private const val CHART_LABEL = "DATA_CHART"
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val RUNTIME_PERMISSION_REQUEST_CODE = 2
+
+// Threshold constant
+private const val PRESSURE_THRESHOLD = 0.05f
 
 //UUIDs
 private const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
@@ -55,9 +59,20 @@ class MainActivity : AppCompatActivity() {
         var pressure: Float,
         var sleep: Boolean
     )
+    // Peak Handler Data Class
+    data class PeakData(
+        var last: Float,
+        var peak: Float,
+        var peakList: MutableList<Float>,
+        var peakTimer: Long, // Must cast all .now() calls to Epoch Seconds, makes comparison easier.
+        var newPeak: Boolean
+    )
+
+    private var peakData = PeakData(0.0f,0.0f, peakList = mutableListOf(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC), false)
 
     lateinit var writeFile: File
 
+    var avgList = mutableListOf<Float>()
     var movingAvg = 0.00f
 
     // Bluetooth low energy variables
@@ -238,6 +253,26 @@ class MainActivity : AppCompatActivity() {
 
     // Declare textview for data entry
     lateinit var dataText: TextView
+    // Declare textview for moving average
+    lateinit var avgText: TextView
+
+    // Declare textview for peak avgs and ratios
+    lateinit var peak1: TextView
+    lateinit var peak2: TextView
+    lateinit var peak3: TextView
+    lateinit var peak4: TextView
+    lateinit var peak5: TextView
+    lateinit var peak6: TextView
+    lateinit var peak7: TextView
+    lateinit var peak8: TextView
+    lateinit var ratio1: TextView
+    lateinit var ratio2: TextView
+    lateinit var ratio3: TextView
+    lateinit var ratio4: TextView
+    lateinit var ratio5: TextView
+    lateinit var ratio6: TextView
+    lateinit var ratio7: TextView
+    lateinit var ratio8: TextView
 
     // Declare spinner for devices found (and related adapter)
     lateinit var spinner: Spinner
@@ -316,8 +351,27 @@ class MainActivity : AppCompatActivity() {
         // Init spinner
         spinner = findViewById(R.id.BleDrop)
 
-        // Init TextView
+        // Init TextViews
         dataText = findViewById(R.id.DataBox)
+        avgText = findViewById(R.id.AvgView)
+
+        // Init Table
+        peak1 = findViewById(R.id.Value1)
+        peak2 = findViewById(R.id.Value2)
+        peak3 = findViewById(R.id.Value3)
+        peak4 = findViewById(R.id.Value4)
+        peak5 = findViewById(R.id.Value5)
+        peak6 = findViewById(R.id.Value6)
+        peak7 = findViewById(R.id.Value7)
+        peak8 = findViewById(R.id.Value8)
+        ratio1 = findViewById(R.id.Ratio1)
+        ratio2 = findViewById(R.id.Ratio2)
+        ratio3 = findViewById(R.id.Ratio3)
+        ratio4 = findViewById(R.id.Ratio4)
+        ratio5 = findViewById(R.id.Ratio5)
+        ratio6= findViewById(R.id.Ratio6)
+        ratio7 = findViewById(R.id.Ratio7)
+        ratio8 = findViewById(R.id.Ratio8)
 
         // Init chart
         lineChart = findViewById(R.id.lineChart)
@@ -542,18 +596,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetLineChartData() {
-
         lineChart.clearValues()
         lineData.clear()
         lineChart.invalidate()
-
+        initPeakData()
+        movingAvg = 0.0f
+        avgList = mutableListOf<Float>()
     }
 
     private fun lineChartAddData(fl: Float) {
             var index = 0f
             if (lineData.isNotEmpty()) {
                 index = lineData.last().x + 1f
-                if (index >= 10){
+                if (lineData.lastIndex >= 99){
                     peakAndAvgCheck(fl)
                 }
             }
@@ -793,6 +848,8 @@ class MainActivity : AppCompatActivity() {
         return buffer.float
     }
 
+    // Float to String formatting
+    fun Float.format(digits: Int) = "%.${digits}f".format(this)
 
     // CSV Writing functions
 
@@ -815,9 +872,128 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Peak detection and baseline averaging functions
-    private fun peakAndAvgCheck(float: Float){
-        // TODO: Check for baseline average and calculate baseline average from latest data
+    private fun peakAndAvgCheck(dataPoint: Float){
         // TODO: Determine peaks and count peaks. Determine ratio between subsequent peaks
+        if (lineData.lastIndex == 99){
+            lineData.forEach {
+                avgList.add(it.y)
+            }
+            var sum = avgList.sum()
+            movingAvg = sum / 100.00f
+            avgText.text = movingAvg.toString()
+            return
+        }
+        // Check for peaks, and if no peak recalculate moving average
+        if (!peakCheck(dataPoint)) {
+            //Push
+            avgList.removeAt(0)
+            avgList.add(dataPoint)
+            //Sum moving average list
+            var sum = avgList.sum()
+            movingAvg = sum / 100.00f
+            //Todo: Update moving average to be shown somewhere.
+            avgText.text = "Avg: " + movingAvg.format(4)
+
+        }
+        else{
+            peakHandler(dataPoint)
+        }
+    }
+
+    private fun peakHandler(dataPoint: Float) {
+        // Todo: Manage peaks
+        if (dataPoint > peakData.last) {
+            peakData.newPeak = true
+            peakData.peakTimer = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+            peakData.last = dataPoint
+        }
+        else if (dataPoint < peakData.last) {
+            if (peakData.newPeak){
+                peakData.peak = peakData.last
+                peakData.peakList.add(peakData.peak)
+                peakData.newPeak = false
+                peakUIHandler()
+            }
+            //Check timer to see if it has been too long since last peak
+            if (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - peakData.peakTimer > 2 ) {
+                initPeakData()
+            }
+            peakData.last = dataPoint
+        }
+
+    }
+
+    private fun initPeakData() {
+        peakData = PeakData(0.0f,0.0f, peakList = mutableListOf(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC), false)
+    }
+
+    private fun peakUIHandler(){
+        // Todo: Update UI to show ratios between peaks
+        // Todo: Update UI to count and show peaks
+        val index = peakData.peakList.size
+        when (index){
+            1 -> {
+                initTable()
+                peak1.text = peakData.peakList[index-1].toString()
+                ratio1.text = "N/A"
+            }
+            2 -> {
+                peak2.text = peakData.peakList[index-1].format(4)
+                ratio2.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            3 -> {
+                peak3.text = peakData.peakList[index-1].format(4)
+                ratio3.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            4 -> {
+                peak4.text = peakData.peakList[index-1].format(4)
+                ratio4.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            5 -> {
+                peak5.text = peakData.peakList[index-1].format(4)
+                ratio5.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            6 -> {
+                peak6.text = peakData.peakList[index-1].format(4)
+                ratio6.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            7 -> {
+                peak7.text = peakData.peakList[index-1].format(4)
+                ratio7.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+            8 -> {
+                peak8.text = peakData.peakList[index-1].format(4)
+                ratio8.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+            }
+        }
+
+
+    }
+
+    private fun peakCheck(fl: Float): Boolean{
+        if (fl > (movingAvg+ PRESSURE_THRESHOLD)){
+            return true
+        }
+        return false
+    }
+
+    private fun initTable(){
+        peak1.text = ""
+        ratio1.text = ""
+        peak2.text = ""
+        ratio2.text = ""
+        peak3.text = ""
+        ratio3.text = ""
+        peak4.text = ""
+        ratio4.text = ""
+        peak5.text = ""
+        ratio5.text = ""
+        peak6.text = ""
+        ratio6.text = ""
+        peak7.text = ""
+        ratio7.text = ""
+        peak8.text = ""
+        ratio8.text = ""
     }
 
 }

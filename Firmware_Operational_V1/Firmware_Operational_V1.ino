@@ -235,7 +235,7 @@ bool pressureCheck() {
 
 
   sensorVal = analogRead(sensorPin);
-  pressureVoltage = fmap(sensorVal, 0, 996, 0.000, 15.000);
+  pressureVoltage = fmap(sensorVal, 100, 930, 0.000, 5.000);
 
   //Low Pass Filter
   float yn = 0.969 * yn1 + 0.0155 * pressureVoltage + 0.0155 * xn1;
@@ -243,7 +243,8 @@ bool pressureCheck() {
   xn1 = pressureVoltage;
   yn1 = yn;
 
-  FloatToHex(yn, press_hex);
+  //FloatToHex(yn, press_hex); // With low pass filter
+  FloatToHex(pressureVoltage, press_hex); // No low pass filter
   Messenger(PRESSURE, press_hex);
 
   delay(1);  // wait for 1 ms

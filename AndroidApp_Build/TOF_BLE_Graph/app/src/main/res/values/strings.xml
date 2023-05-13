@@ -3,6 +3,7 @@
 
     <!-- Strings for Text Views -->
     <string name="DataLabel">Data:</string>
+    <string name="AvgLabel">Avg:</string>
     <string name="sourceLabel">Source:</string>
     <string name="defaultData">Data from device goes here.</string>
 
@@ -19,5 +20,6 @@
     <string name="ble_button3">Ble Disconnect</string>
     <string name="pauseBtnDesc">Pause/Resume Data Logging</string>
     <string name="spinnerDesc">Discovered BLE Devices</string>
+    <string name="AvgInit">Avg:</string>
 
 </resources>
