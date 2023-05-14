@@ -6,6 +6,8 @@
     <string name="AvgLabel">Avg:</string>
     <string name="sourceLabel">Source:</string>
     <string name="defaultData">Data from device goes here.</string>
+    <string name="countLabel"><u>Number of Peaks</u></string>
+    <string name="ratioLabel"><u>Ratio: Last Peak to First</u></string>
 
     <!-- Strings for Buttons -->
     <string name="pause">Pause/Continue</string>

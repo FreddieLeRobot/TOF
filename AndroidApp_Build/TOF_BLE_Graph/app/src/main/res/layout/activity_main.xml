@@ -177,220 +177,48 @@
         app:layout_constraintStart_toEndOf="@+id/DataBox"
         app:layout_constraintTop_toTopOf="@+id/DataBox" />
 
-    <TableLayout
-        android:id="@+id/PeakTable"
-        android:layout_width="0dp"
-        android:layout_height="77dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <TextView
+        android:id="@+id/countLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/countLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lineChart">
+        app:layout_constraintTop_toBottomOf="@+id/lineChart" />
 
-        <TableRow
-            android:background="#DAE8FC"
-            android:padding="5dp">
+    <TextView
+        android:id="@+id/ratioLAbel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/ratioLabel"
+        app:layout_constraintStart_toEndOf="@+id/countLabel"
+        app:layout_constraintTop_toBottomOf="@+id/lineChart" />
 
-            <TextView
-                android:layout_width="49dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="Peaks:"
-                android:textSize="11sp" />
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="52dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="10dp"
+        android:text="0"
+        android:textSize="24sp"
+        android:gravity="center_vertical|center_horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/countLabel"
+        app:layout_constraintStart_toStartOf="@+id/countLabel"
+        app:layout_constraintTop_toBottomOf="@+id/countLabel" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="2"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="3"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="4"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="5"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="6"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="7"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="8"
-                android:textSize="11sp" />
-        </TableRow>
-
-        <TableRow
-            android:background="#f0f5fc"
-            android:padding="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Value:"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Value8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_height="wrap_content"
-            android:background="#DAE8FC"
-            android:padding="5dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ratio:"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/Ratio8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="11sp" />
-        </TableRow>
-
-    </TableLayout>
+    <TextView
+        android:id="@+id/ratio"
+        android:layout_width="52dp"
+        android:layout_height="39dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="0.00"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/ratioLAbel"
+        app:layout_constraintStart_toStartOf="@+id/ratioLAbel"
+        app:layout_constraintTop_toBottomOf="@+id/ratioLAbel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

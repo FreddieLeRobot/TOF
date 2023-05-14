@@ -34,8 +34,10 @@ import java.io.FileWriter
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 private const val CHART_LABEL = "DATA_CHART"
@@ -57,7 +59,9 @@ class MainActivity : AppCompatActivity() {
     data class DataLog(
         var time: LocalDateTime,
         var pressure: Float,
-        var sleep: Boolean
+        var sleep: Boolean,
+        var peakCount: Int,
+        var peakRatio: String
     )
     // Peak Handler Data Class
     data class PeakData(
@@ -257,22 +261,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var avgText: TextView
 
     // Declare textview for peak avgs and ratios
-    lateinit var peak1: TextView
-    lateinit var peak2: TextView
-    lateinit var peak3: TextView
-    lateinit var peak4: TextView
-    lateinit var peak5: TextView
-    lateinit var peak6: TextView
-    lateinit var peak7: TextView
-    lateinit var peak8: TextView
-    lateinit var ratio1: TextView
-    lateinit var ratio2: TextView
-    lateinit var ratio3: TextView
-    lateinit var ratio4: TextView
-    lateinit var ratio5: TextView
-    lateinit var ratio6: TextView
-    lateinit var ratio7: TextView
-    lateinit var ratio8: TextView
+    lateinit var countText: TextView
+    lateinit var ratioText: TextView
 
     // Declare spinner for devices found (and related adapter)
     lateinit var spinner: Spinner
@@ -356,22 +346,8 @@ class MainActivity : AppCompatActivity() {
         avgText = findViewById(R.id.AvgView)
 
         // Init Table
-        peak1 = findViewById(R.id.Value1)
-        peak2 = findViewById(R.id.Value2)
-        peak3 = findViewById(R.id.Value3)
-        peak4 = findViewById(R.id.Value4)
-        peak5 = findViewById(R.id.Value5)
-        peak6 = findViewById(R.id.Value6)
-        peak7 = findViewById(R.id.Value7)
-        peak8 = findViewById(R.id.Value8)
-        ratio1 = findViewById(R.id.Ratio1)
-        ratio2 = findViewById(R.id.Ratio2)
-        ratio3 = findViewById(R.id.Ratio3)
-        ratio4 = findViewById(R.id.Ratio4)
-        ratio5 = findViewById(R.id.Ratio5)
-        ratio6= findViewById(R.id.Ratio6)
-        ratio7 = findViewById(R.id.Ratio7)
-        ratio8 = findViewById(R.id.Ratio8)
+        countText = findViewById(R.id.count)
+        ratioText = findViewById(R.id.ratio)
 
         // Init chart
         lineChart = findViewById(R.id.lineChart)
@@ -461,7 +437,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun onLogToggle(){
         // TODO: Add back in datetime to filename
-        val csvName = "TOF_Data_" + ".csv"
+        val localTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("MMdd_HHmm")
+        val time = localTime.format(formatter)
+        val csvName = "TOF_Data_$time.csv"
         val fileCreated = createFile(csvName)
         if (fileCreated.isFile) {
             writeFile = fileCreated
@@ -470,9 +449,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun log(file: File, pressure: Float, sleep: Boolean){
-            val logInfo = DataLog(LocalDateTime.now(),pressure, sleep)
+        val logInfo = DataLog(LocalDateTime.now(),pressure, sleep, peakData.peakList.size, ratioText.text.toString())
         val writer = FileWriter(file,true)
-        writer.write("${logInfo.time},${logInfo.pressure},${logInfo.sleep}")
+        writer.write("${logInfo.time},${logInfo.pressure},${logInfo.sleep},${logInfo.peakCount},${logInfo.peakRatio}")
         writer.write(System.getProperty("line.separator"))
         writer.flush()
     }
@@ -703,7 +682,6 @@ class MainActivity : AppCompatActivity() {
 
     // BLE Writes
     private fun writeBLESleep(characteristic: BluetoothGattCharacteristic, payload: ByteArray) {
-        // TODO: Write value for sleep
         val writeType = when {
             characteristic.isWritable() -> BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
             characteristic.isWritableWithoutResponse() -> {
@@ -855,7 +833,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun OutputStream.createCsv(){
             val writer = bufferedWriter()
-            writer.write("Date/Time,Pressure,Sleep Mode")
+            writer.write("Date/Time,Pressure,Sleep Mode,Peak Count,Peak Ratio")
             writer.newLine()
             writer.flush()
     }
@@ -873,7 +851,6 @@ class MainActivity : AppCompatActivity() {
 
     // Peak detection and baseline averaging functions
     private fun peakAndAvgCheck(dataPoint: Float){
-        // TODO: Determine peaks and count peaks. Determine ratio between subsequent peaks
         if (lineData.lastIndex == 99){
             lineData.forEach {
                 avgList.add(it.y)
@@ -891,7 +868,6 @@ class MainActivity : AppCompatActivity() {
             //Sum moving average list
             var sum = avgList.sum()
             movingAvg = sum / 100.00f
-            //Todo: Update moving average to be shown somewhere.
             avgText.text = "Avg: " + movingAvg.format(4)
 
         }
@@ -901,7 +877,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun peakHandler(dataPoint: Float) {
-        // Todo: Manage peaks
         if (dataPoint > peakData.last) {
             peakData.newPeak = true
             peakData.peakTimer = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
@@ -928,45 +903,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun peakUIHandler(){
-        // Todo: Update UI to show ratios between peaks
-        // Todo: Update UI to count and show peaks
         val index = peakData.peakList.size
-        when (index){
-            1 -> {
-                initTable()
-                peak1.text = peakData.peakList[index-1].toString()
-                ratio1.text = "N/A"
-            }
-            2 -> {
-                peak2.text = peakData.peakList[index-1].format(4)
-                ratio2.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            3 -> {
-                peak3.text = peakData.peakList[index-1].format(4)
-                ratio3.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            4 -> {
-                peak4.text = peakData.peakList[index-1].format(4)
-                ratio4.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            5 -> {
-                peak5.text = peakData.peakList[index-1].format(4)
-                ratio5.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            6 -> {
-                peak6.text = peakData.peakList[index-1].format(4)
-                ratio6.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            7 -> {
-                peak7.text = peakData.peakList[index-1].format(4)
-                ratio7.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
-            8 -> {
-                peak8.text = peakData.peakList[index-1].format(4)
-                ratio8.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-            }
+        if (index == 1){
+            initTable()
+            countText.text = index.toString()
+            ratioText.text = "N/A"
         }
-
+        else if (index <= 8) {
+            countText.text = index.toString()
+            ratioText.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+        }
+        else {
+            countText.text = index.toString() + "!"
+            ratioText.text = "Error!"
+            Toast.makeText(this, "Detecting too many peaks. Reset graph or check pressure of device.", Toast.LENGTH_SHORT).show()
+        }
 
     }
 
@@ -978,22 +929,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTable(){
-        peak1.text = ""
-        ratio1.text = ""
-        peak2.text = ""
-        ratio2.text = ""
-        peak3.text = ""
-        ratio3.text = ""
-        peak4.text = ""
-        ratio4.text = ""
-        peak5.text = ""
-        ratio5.text = ""
-        peak6.text = ""
-        ratio6.text = ""
-        peak7.text = ""
-        ratio7.text = ""
-        peak8.text = ""
-        ratio8.text = ""
+        countText.text = ""
+        ratioText.text = ""
     }
 
 }
