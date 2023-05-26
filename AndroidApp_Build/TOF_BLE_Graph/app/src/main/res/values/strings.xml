@@ -8,12 +8,16 @@
     <string name="defaultData">Data from device goes here.</string>
     <string name="countLabel"><u>Number of Peaks</u></string>
     <string name="ratioLabel"><u>Ratio: Last Peak to First</u></string>
+    <string name="ampThresholdLabel"><u>Amplitude Threshold</u></string>
+    <string name="slopeThresholdLabel"><u>Slope Threshold</u></string>
 
     <!-- Strings for Buttons -->
     <string name="pause">Pause/Continue</string>
     <string name="resetGraphButton">Reset Graph</string>
     <string name="sleepToggle">Sleep</string>
     <string name="logToggle">Log Data</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 
 
     <!-- Content Descriptions -->

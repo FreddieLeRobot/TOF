@@ -11,9 +11,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -22,6 +25,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -34,18 +38,30 @@ import java.io.FileWriter
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.exp
+import kotlin.math.ln
+import kotlin.math.pow
 
 private const val CHART_LABEL = "DATA_CHART"
+private const val DERIV_LABEL = "DERIV_CHART"
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val RUNTIME_PERMISSION_REQUEST_CODE = 2
 
 // Threshold constant
-private const val PRESSURE_THRESHOLD = 0.05f
+private const val PRESSURE_THRESHOLD = 0.03
+private const val SLOPE_THRESHOLD = 0.01
+
+// Peak Detection Constant
+private const val BASELINE_AVG_WINDOW_SIZE = 100 // Change this to make the average pressure calc window larger
+private const val LLS_WINDOW = 9 // Change this to make the linear regression window larger
+
+private const val PEAK_TIMEOUT_MS = 5000
+
+// Constant to allow app to operate in debug mode
+private const val DEBUG_MODE = 0
 
 //UUIDs
 private const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
@@ -65,14 +81,28 @@ class MainActivity : AppCompatActivity() {
     )
     // Peak Handler Data Class
     data class PeakData(
-        var last: Float,
-        var peak: Float,
         var peakList: MutableList<Float>,
-        var peakTimer: Long, // Must cast all .now() calls to Epoch Seconds, makes comparison easier.
         var newPeak: Boolean
     )
 
-    private var peakData = PeakData(0.0f,0.0f, peakList = mutableListOf(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC), false)
+    // Assignable thresholds
+    private var ampThreshold = PRESSURE_THRESHOLD
+    private var slopeThreshold = SLOPE_THRESHOLD
+
+    // Timer for peaks
+    private var isTimerRunning = false
+    private var peakTimer = object: CountDownTimer(PEAK_TIMEOUT_MS.toLong(),1000){
+        override fun onTick(p0: Long) {
+            Log.i("Peak Timer", "1 sec left.")
+        }
+
+        override fun onFinish() {
+            isTimerRunning = false
+            Log.i("Peak Timer", "Timer done!")
+        }
+    }
+
+    private var peakData = PeakData(peakList = mutableListOf(), false)
 
     lateinit var writeFile: File
 
@@ -255,6 +285,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var sleepBtn: ToggleButton
     lateinit var logBtn: ToggleButton
 
+    // Init amp threshold control
+    lateinit var ampThreshText: EditText
+    lateinit var ampPlusBtn: Button
+    lateinit var ampMinusBtn: Button
+
+    // Init slope threshold control
+    lateinit var slopeThreshText: EditText
+    lateinit var slopePlusBtn: Button
+    lateinit var slopeMinusBtn: Button
+
     // Declare textview for data entry
     lateinit var dataText: TextView
     // Declare textview for moving average
@@ -283,6 +323,13 @@ class MainActivity : AppCompatActivity() {
     // Mutable list for live entry of data to chart
     private val lineData = mutableListOf<Entry>()
     private var _lineDataSet = LineDataSet(lineData, CHART_LABEL)
+
+    // Mutable list for live entry of derivative to chart
+    private val derivData = mutableListOf<Entry>()
+    private var _derivDataSet = LineDataSet(derivData, DERIV_LABEL)
+
+    //Derivative smoothing Array
+    private val smoothArray = intArrayOf(0,0,0,0,-3,-3,-2,-1,0,1,2,3,3,0,0,0,0)
 
 
     // When first starting app
@@ -314,8 +361,56 @@ class MainActivity : AppCompatActivity() {
         sleepBtn = findViewById(R.id.sleep_toggle)
         logBtn = findViewById(R.id.log_toggle)
 
+        ampThreshText = findViewById(R.id.ampThreshText)
+        ampThreshText.setText(ampThreshold.toString())
+        ampMinusBtn = findViewById(R.id.ampThreshButtonMinus)
+        ampPlusBtn = findViewById(R.id.ampThreshButtonPlus)
+
+        slopeThreshText = findViewById(R.id.slopeThreshText)
+        slopeThreshText.setText(slopeThreshold.toString())
+        slopeMinusBtn = findViewById(R.id.slopeThreshButtonMinus)
+        slopePlusBtn = findViewById(R.id.slopeThreshButtonPlus)
 
         //Listeners for btns
+
+        slopePlusBtn.setOnClickListener {
+            if (slopeThreshold <= 0.99) {
+                slopeThreshold += 0.01
+            }
+            else if (slopeThreshold < 1){
+                slopeThreshold = 1.0
+            }
+            slopeThreshText.setText(slopeThreshold.format(2))
+        }
+        slopeMinusBtn.setOnClickListener {
+            if (slopeThreshold >= 0.01) {
+                slopeThreshold -= 0.01
+            }
+            else if (slopeThreshold > 0){
+                slopeThreshold = 0.0
+            }
+            slopeThreshText.setText(slopeThreshold.format(2))
+        }
+
+        ampPlusBtn.setOnClickListener {
+            if (ampThreshold <= 0.99) {
+                ampThreshold += 0.01
+            }
+            else if (ampThreshold < 1){
+                ampThreshold = 1.0
+            }
+            ampThreshText.setText(ampThreshold.format(2))
+        }
+        ampMinusBtn.setOnClickListener {
+            if (ampThreshold >= 0.01) {
+                ampThreshold -= 0.01
+            }
+            else if (ampThreshold > 0){
+                ampThreshold = 0.0
+            }
+            ampThreshText.setText(ampThreshold.format(2))
+        }
+
         pauseBtn.setOnClickListener{
             if (!subscribedPressure) {
                 subscribedPressure = true
@@ -337,6 +432,40 @@ class MainActivity : AppCompatActivity() {
         logBtn.setOnClickListener {
             onLogToggle()
         }
+
+        // Listener for text input
+        ampThreshText.addTextChangedListener (object: TextWatcher{
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val value = ampThreshText.text.toString().toDoubleOrNull()
+                if (value != null) {
+                    ampThreshold = value!!
+                }
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+        })
+        slopeThreshText.addTextChangedListener (object: TextWatcher{
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val value = slopeThreshText.text.toString().toDoubleOrNull()
+                if (value != null) {
+                    slopeThreshold = value!!
+                }
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+        })
 
         // Init spinner
         spinner = findViewById(R.id.BleDrop)
@@ -554,6 +683,7 @@ class MainActivity : AppCompatActivity() {
         axisRight.isEnabled = false
 
         // Y Axis not changed for now
+
         // X Axis
         xAxis.apply {
             axisMinimum = 0f
@@ -574,9 +704,28 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun lineChartUpdate(){
+        // Change DEBUG Mode at top to 0 to see regular data
+        if(DEBUG_MODE==0){
+            lineChart.data = LineData(_lineDataSet)
+            lineChart.notifyDataSetChanged()
+            lineChart.setVisibleXRangeMaximum(3000F)
+            lineChart.setVisibleXRangeMinimum(3000F)
+            lineChart.moveViewToX(_lineDataSet.xMax)
+        }
+        else {
+            lineChart.data = LineData(_derivDataSet)
+            lineChart.notifyDataSetChanged()
+            lineChart.setVisibleXRangeMaximum(3000F)
+            lineChart.setVisibleXRangeMinimum(10F)
+            lineChart.moveViewToX(_derivDataSet.xMax)
+        }
+    }
+
     private fun resetLineChartData() {
         lineChart.clearValues()
         lineData.clear()
+        derivData.clear()
         lineChart.invalidate()
         initPeakData()
         movingAvg = 0.0f
@@ -584,29 +733,227 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun lineChartAddData(fl: Float) {
-            var index = 0f
-            if (lineData.isNotEmpty()) {
-                index = lineData.last().x + 1f
-                if (lineData.lastIndex >= 99){
-                    peakAndAvgCheck(fl)
-                }
-            }
+        var index = 0f
+        if (lineData.isNotEmpty()) {
+            index = lineData.last().x + 1f
+        }
+        lineData.add(Entry(index, fl))
 
-            lineData.add(Entry(index, fl))
+        if (lineData.lastIndex >= 17){
+            derivativeData(fl, (index-1).toInt())
+        }
+        if (lineData.lastIndex  >= BASELINE_AVG_WINDOW_SIZE-1){
+            avgAndPeakCheck(lineData[lineData.lastIndex-8].y)
+        }
 
+        if (DEBUG_MODE == 0) {
             _lineDataSet = LineDataSet(lineData, CHART_LABEL)
             _lineDataSet.setDrawCircles(false)
-
-
+        }
+        else{
+            if (lineData.lastIndex >= 18){
+                _derivDataSet = LineDataSet(derivData, CHART_LABEL)
+                _derivDataSet.setDrawCircles(false)
+            }
+        }
+        if (DEBUG_MODE == 0){
             lineChartUpdate()
+        }
+
+        else{
+            if (lineData.lastIndex >= 18){
+                lineChartUpdate()
+            }
+        }
     }
 
-    private fun lineChartUpdate(){
-        lineChart.data = LineData(_lineDataSet)
-        lineChart.notifyDataSetChanged()
-        lineChart.setVisibleXRangeMaximum(3000F)
-        lineChart.setVisibleXRangeMinimum(3000F)
-        lineChart.moveViewToX(_lineDataSet.xMax)
+    private fun derivativeData(fl:Float, index:Int){
+        if (index == 17){
+            for (item: Int in 0..7){
+                derivData.add(Entry(item.toFloat(),0.00f))
+                if (DEBUG_MODE == 1) {
+                    Log.i("Derivative Index", derivData[item].x.toString())
+                    Log.i("Derivative", derivData[item].y.toString())
+                }
+            }
+        }
+        var newDeriv = calculateDerivative(index)
+
+        val entryNum = index-8
+        derivData.add(Entry(entryNum.toFloat(),newDeriv))
+        if (DEBUG_MODE == 1) {
+            Log.i("Derivative Index", derivData.last().x.toString())
+            Log.i("Derivative", derivData.last().y.toString())
+        }
+    }
+
+    private fun calculateDerivative(index: Int):Float{
+        var i = 16
+        var derivative = 0.00f
+        for (num in 0..16){
+            derivative += (lineData[index-num].y * smoothArray[i-num])
+        }
+        return derivative
+    }
+
+    // Peak detection and baseline averaging functions
+    private fun avgAndPeakCheck(dataPoint: Float){
+        if (lineData.lastIndex == BASELINE_AVG_WINDOW_SIZE-1){
+            lineData.forEach {
+                avgList.add(it.y)
+            }
+            var sum = avgList.sum()
+            movingAvg = sum / BASELINE_AVG_WINDOW_SIZE.toFloat()
+            avgText.text = movingAvg.toString()
+            return
+        }
+        // Check for peaks, and if no peak recalculate moving average
+        if (!peakCheck(dataPoint)) {
+            //Push
+            avgList.removeAt(0)
+            avgList.add(dataPoint)
+            //Sum moving average list
+            var sum = avgList.sum()
+            movingAvg = sum / BASELINE_AVG_WINDOW_SIZE.toFloat()
+            avgText.text = "Avg: " + movingAvg.format(4)
+
+        }
+        else{
+            peakHandler(dataPoint)
+        }
+    }
+
+    private fun peakHandler(dataPoint: Float) {
+
+        // Todo: Change out peaklist add for linear least squares curve fit
+
+        //Check timer to see if it has been too long since last peak
+        if (!isTimerRunning) {
+            initPeakData()
+            isTimerRunning = true
+        }
+        else{
+            peakTimer.cancel()
+        }
+
+        peakTimer.start()
+        val peak = peakLLS(dataPoint)
+        peakData.peakList.add(peak.toFloat())
+        peakUIHandler()
+    }
+
+    private fun peakLLS(dp: Float): Double{
+        // if the last data point matches the given data, try to find gaussian parameters
+        // using the quadratic (parabola) linear least squares fit to transformed data x, ln(y),
+        // regression equation: y = ax^2 + bx + c
+        // Need to find sum(x), sum(y), sum(X^2), sum(X^3), sum(X^4), sum(ln(y)), sum(x^2 * ln(y))
+        if (lineData[lineData.lastIndex-8].y == dp) {
+            //Todo: LLS algorithm for peak detection
+            val startIndex = derivData.last().x.toInt() - 4
+            // initialize sums
+            var X_Sum = 0.00
+            var lnY_Sum = 0.00
+            var Xy_Sum = 0.00
+            var X2_Sum = 0.00
+            var X3_Sum = 0.00
+            var X4_Sum = 0.00
+            var X2y_Sum = 0.00
+            var Xcount = 10.0
+            // Sum the various
+            for (num in startIndex..startIndex + (LLS_WINDOW-1)) {
+                // Since we aren't looking for exact position of the peak on the X-Axis
+                // (and that time will be logged in a log output)
+                // X is always 10-18, to keep floating point calculations low.
+                // At higher indexes, values like X^4_Sum get very large, and as a result,
+                // accuracy when converting from base-2 to base-10 is the result.
+                X_Sum += Xcount
+                lnY_Sum += ln(lineData[num].y)
+                Xy_Sum += (Xcount * ln(lineData[num].y))
+                X2_Sum += Xcount.pow(2)
+                X3_Sum += Xcount.pow(3)
+                X4_Sum += Xcount.pow(4)
+                X2y_Sum += ln(lineData[num].y) * (Xcount.pow(2))
+                Xcount += 1.0
+                Log.i("LLS Data", "$X_Sum  $lnY_Sum  $Xy_Sum  $X2_Sum  $X3_Sum  $X4_Sum  $X2y_Sum")
+            }
+            // Create linear coefficients for quadratic formula
+            // First find the denominator for the eqns to find a, b and c
+            val denominator = LLS_WINDOW.toFloat() * X2_Sum * X4_Sum + 2 * X_Sum * X2_Sum * X3_Sum - X2_Sum.pow(3) - X_Sum.pow(2) * X4_Sum - LLS_WINDOW.toFloat() * X3_Sum.pow(2)
+
+            Log.i("LLS Denominator", "$denominator")
+            // Find coefficients
+            val coeffA =
+                ((LLS_WINDOW * X2_Sum * X2y_Sum) + (X_Sum * X3_Sum * lnY_Sum) + (X_Sum * X2_Sum * Xy_Sum) - (X2_Sum.pow(
+                    2
+                ) * lnY_Sum) - (X_Sum.pow(2) * X2y_Sum) - (LLS_WINDOW * X3_Sum * Xy_Sum)) / denominator
+            val coeffB =
+                (LLS_WINDOW * X4_Sum * Xy_Sum + X_Sum * X2_Sum * X2y_Sum + X2_Sum * X3_Sum * lnY_Sum - X2_Sum.pow(
+                    2
+                ) * Xy_Sum - X_Sum * X4_Sum * lnY_Sum - LLS_WINDOW * X3_Sum * X2y_Sum) / denominator
+            val coeffC =
+                (X2_Sum * X4_Sum * lnY_Sum + X2_Sum * X3_Sum * Xy_Sum + X_Sum * X3_Sum * X2y_Sum - X2_Sum.pow(
+                    2
+                ) * X2y_Sum - X_Sum * X4_Sum * Xy_Sum - X3_Sum.pow(2) * lnY_Sum) / denominator
+
+            Log.i("LLS Coeffs", "$coeffA  $coeffB  $coeffC")
+
+            // Finally, find the height of the peak (Formula: Height = EXP(CoeffC-a*(b/(2*a))^2)
+            Log.i("Peak Height Found", (exp(coeffC - coeffA * (coeffB / (2 * coeffA)).pow(2))).toString())
+
+            return exp(coeffC - coeffA * (coeffB / (2 * coeffA)).pow(2))
+        }
+        else{
+            Log.i("Peak Detect","Datapoint did not match last point...")
+        }
+        return 0.00
+    }
+
+    private fun initPeakData() {
+        peakData = PeakData(peakList = mutableListOf(), false)
+    }
+
+    private fun peakUIHandler(){
+        val index = peakData.peakList.size
+        if (index == 1){
+            initTable()
+            countText.text = index.toString()
+            ratioText.text = "N/A"
+        }
+        else if (index <= 8) {
+            countText.text = index.toString()
+            ratioText.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
+        }
+        else {
+            countText.text = index.toString() + "!"
+            ratioText.text = "Error!"
+            Toast.makeText(this, "Detecting too many peaks. Reset graph or check pressure of device.", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun peakCheck(fl: Float): Boolean{
+        // First, check to see if the value is larger than the threshold.
+        if (fl > (movingAvg+ ampThreshold)){
+            // If so, check to see if there was a down zero crossing in first derivative
+            if (DEBUG_MODE == 1) {
+                Log.i("deriv Check1", derivData.last().y.toString())
+                Log.i("deriv Check2", derivData[derivData.lastIndex - 1].y.toString())
+            }
+            if (derivData.last().y < 0.0f && derivData[derivData.lastIndex-1].y > 0.0f){
+                // Finally, if so, check to see if the crossing slope is greater than the slope threshold.
+                if (derivData[derivData.lastIndex-1].y - derivData.last().y > slopeThreshold){
+                    // Peak detected!
+                    return true
+                }
+            }
+        }
+        // If those three conditions are not met, then a peak is not detected.
+        return false
+    }
+
+    private fun initTable(){
+        countText.text = ""
+        ratioText.text = ""
     }
 
     // BLE Functions
@@ -829,6 +1176,9 @@ class MainActivity : AppCompatActivity() {
     // Float to String formatting
     fun Float.format(digits: Int) = "%.${digits}f".format(this)
 
+    // Double to String formatting
+    fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
     // CSV Writing functions
 
     private fun OutputStream.createCsv(){
@@ -847,90 +1197,6 @@ class MainActivity : AppCompatActivity() {
             Log.e("FileOutputStream", "File could not be created successfully!")
         }
         return file
-    }
-
-    // Peak detection and baseline averaging functions
-    private fun peakAndAvgCheck(dataPoint: Float){
-        if (lineData.lastIndex == 99){
-            lineData.forEach {
-                avgList.add(it.y)
-            }
-            var sum = avgList.sum()
-            movingAvg = sum / 100.00f
-            avgText.text = movingAvg.toString()
-            return
-        }
-        // Check for peaks, and if no peak recalculate moving average
-        if (!peakCheck(dataPoint)) {
-            //Push
-            avgList.removeAt(0)
-            avgList.add(dataPoint)
-            //Sum moving average list
-            var sum = avgList.sum()
-            movingAvg = sum / 100.00f
-            avgText.text = "Avg: " + movingAvg.format(4)
-
-        }
-        else{
-            peakHandler(dataPoint)
-        }
-    }
-
-    private fun peakHandler(dataPoint: Float) {
-        if (dataPoint > peakData.last) {
-            peakData.newPeak = true
-            peakData.peakTimer = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-            peakData.last = dataPoint
-        }
-        else if (dataPoint < peakData.last) {
-            if (peakData.newPeak){
-                peakData.peak = peakData.last
-                peakData.peakList.add(peakData.peak)
-                peakData.newPeak = false
-                peakUIHandler()
-            }
-            //Check timer to see if it has been too long since last peak
-            if (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) - peakData.peakTimer > 2 ) {
-                initPeakData()
-            }
-            peakData.last = dataPoint
-        }
-
-    }
-
-    private fun initPeakData() {
-        peakData = PeakData(0.0f,0.0f, peakList = mutableListOf(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC), false)
-    }
-
-    private fun peakUIHandler(){
-        val index = peakData.peakList.size
-        if (index == 1){
-            initTable()
-            countText.text = index.toString()
-            ratioText.text = "N/A"
-        }
-        else if (index <= 8) {
-            countText.text = index.toString()
-            ratioText.text = ((peakData.peakList[index-1]-movingAvg)/(peakData.peakList[0]-movingAvg)).format(2)
-        }
-        else {
-            countText.text = index.toString() + "!"
-            ratioText.text = "Error!"
-            Toast.makeText(this, "Detecting too many peaks. Reset graph or check pressure of device.", Toast.LENGTH_SHORT).show()
-        }
-
-    }
-
-    private fun peakCheck(fl: Float): Boolean{
-        if (fl > (movingAvg+ PRESSURE_THRESHOLD)){
-            return true
-        }
-        return false
-    }
-
-    private fun initTable(){
-        countText.text = ""
-        ratioText.text = ""
     }
 
 }

@@ -7,6 +7,45 @@
     tools:context=".MainActivity">
 
     <!-- Text Views-->
+
+    <EditText
+        android:id="@+id/slopeThreshText"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="40dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/log_toggle"
+        app:layout_constraintStart_toEndOf="@+id/ampThreshButtonPlus"
+        app:layout_constraintTop_toTopOf="@+id/sleep_toggle" />
+
+    <Button
+        android:id="@+id/slopeThreshButtonPlus"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/plus"
+        app:layout_constraintStart_toEndOf="@+id/slopeThreshText"
+        app:layout_constraintTop_toTopOf="@+id/slopeThreshText" />
+
+    <Button
+        android:id="@+id/slopeThreshButtonMinus"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/minus"
+        app:layout_constraintBottom_toBottomOf="@+id/slopeThreshText"
+        app:layout_constraintStart_toEndOf="@+id/slopeThreshText" />
+
+    <TextView
+        android:id="@+id/slopeThreshLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/slopeThresholdLabel"
+        app:layout_constraintBottom_toTopOf="@+id/slopeThreshText"
+        app:layout_constraintStart_toStartOf="@+id/slopeThreshText" />
+
     <TextView
         android:id="@+id/dataLabel"
         android:layout_width="wrap_content"
@@ -220,5 +259,43 @@
         app:layout_constraintEnd_toEndOf="@+id/ratioLAbel"
         app:layout_constraintStart_toStartOf="@+id/ratioLAbel"
         app:layout_constraintTop_toBottomOf="@+id/ratioLAbel" />
+
+    <EditText
+        android:id="@+id/ampThreshText"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="20dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/log_toggle"
+        app:layout_constraintStart_toEndOf="@+id/sleep_toggle"
+        app:layout_constraintTop_toTopOf="@+id/sleep_toggle" />
+
+    <TextView
+        android:id="@+id/ampThreshLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/ampThresholdLabel"
+        app:layout_constraintBottom_toTopOf="@+id/ampThreshText"
+        app:layout_constraintStart_toStartOf="@+id/ampThreshText" />
+
+    <Button
+        android:id="@+id/ampThreshButtonPlus"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/plus"
+        app:layout_constraintStart_toEndOf="@+id/ampThreshText"
+        app:layout_constraintTop_toTopOf="@+id/ampThreshText" />
+
+    <Button
+        android:id="@+id/ampThreshButtonMinus"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/minus"
+        app:layout_constraintBottom_toBottomOf="@+id/ampThreshText"
+        app:layout_constraintStart_toEndOf="@+id/ampThreshText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
