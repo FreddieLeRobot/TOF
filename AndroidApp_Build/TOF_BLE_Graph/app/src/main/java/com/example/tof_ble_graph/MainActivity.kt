@@ -51,8 +51,8 @@ private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val RUNTIME_PERMISSION_REQUEST_CODE = 2
 
 // Threshold constant
-private const val PRESSURE_THRESHOLD = 0.03
-private const val SLOPE_THRESHOLD = 0.01
+private const val PRESSURE_THRESHOLD = 0.07
+private const val SLOPE_THRESHOLD = 0.04
 
 // Peak Detection Constant
 private const val BASELINE_AVG_WINDOW_SIZE = 100 // Change this to make the average pressure calc window larger
